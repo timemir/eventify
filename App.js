@@ -2,7 +2,7 @@ import "react-native-gesture-handler";
 import { StatusBar } from "expo-status-bar";
 import { Text, View } from "react-native";
 //Navigation
-import { NavigationContainer } from "@react-navigation/native";
+import { NavigationContainer, DefaultTheme } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import LoginScreen from "./screens/AuthScreens/LoginScreen";
 import SignupScreen from "./screens/AuthScreens/SignupScreen";
@@ -111,9 +111,18 @@ function AuthenticatedStack() {
 
 // Switch between AuthenticationProcess & AuthenticatedStack, if the User is authenticated. This makes it impossible to get to main screens without
 // beeing registered.
+
+// Theme Config for Global Background Color
+const MyTheme = {
+  ...DefaultTheme,
+  colors: {
+    ...DefaultTheme.colors,
+    background: "white",
+  },
+};
 function Navigation() {
   return (
-    <NavigationContainer>
+    <NavigationContainer theme={MyTheme}>
       {!SWITCH_SCREENS && <AuthenticationProcess />}
       {SWITCH_SCREENS && <AuthenticatedStack />}
     </NavigationContainer>

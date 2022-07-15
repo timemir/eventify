@@ -5,7 +5,10 @@ export default function ButtonDefault(props) {
   return (
     <Pressable
       onPress={props.onPress}
-      style={({ pressed }) => pressed && styles.pressedButton}
+      style={({ pressed }) => [
+        pressed && styles.pressedButton,
+        { width: "100%" },
+      ]}
     >
       <View style={styles.button}>
         <Text style={styles.text}>{props.title}</Text>
