@@ -8,7 +8,7 @@ export default function ProfileCircleSmall(props) {
       <Pressable onPress={props.onPress}>
         <View style={styles.imageContainer}>
           <Image
-            source={require("../../assets/profileSmall.jpg")}
+            source={require("../../assets/images/profileSmall.jpg")}
             style={styles.image}
           />
         </View>

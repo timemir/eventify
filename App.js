@@ -6,6 +6,7 @@ import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import LoginScreen from "./screens/AuthScreens/LoginScreen";
 import SignupScreen from "./screens/AuthScreens/SignupScreen";
+import WelcomeScreen from "./screens/AuthScreens/WelcomeScreen";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import HomeScreen from "./screens/MainScreens/HomeScreen";
 import SearchScreen from "./screens/MainScreens/SearchScreen";
@@ -21,7 +22,7 @@ const Stack = createNativeStackNavigator();
 const BottomTab = createBottomTabNavigator();
 const Drawer = createDrawerNavigator();
 // TEMP: Variable to simulate Auth Process to switch between Navigators in Component "Navigator"
-const SWITCH_SCREENS = true;
+const SWITCH_SCREENS = false;
 // Drawer Navigator for HomeScreen
 function DrawerNavigator() {
   return (
@@ -92,6 +93,7 @@ function BottomTabNavigator() {
 function AuthenticationProcess() {
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
+      <Stack.Screen name="welcome" component={WelcomeScreen} />
       <Stack.Screen name="signup" component={SignupScreen} />
       <Stack.Screen name="login" component={LoginScreen} />
     </Stack.Navigator>
