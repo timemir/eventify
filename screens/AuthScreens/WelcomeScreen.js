@@ -5,6 +5,11 @@ import ButtonAlt from "../../components/UI/ButtonAlt";
 import Lottie from "lottie-react-native";
 
 const WelcomeScreen = (props) => {
+  //Handle Users skipping as Guest
+  function welcomeSkipHandler() {
+    //TODO: Skip Auth
+  }
+
   return (
     <View style={styles.welcomeContainer}>
       <View>
@@ -43,6 +48,7 @@ const WelcomeScreen = (props) => {
           {/* TODO: USER AUTH ANONYMOUS */}
           <Pressable
             style={({ pressed }) => pressed && styles.pressedButtonSkip}
+            onPress={welcomeSkipHandler}
           >
             <Text style={styles.welcomeSkip}>Als Gast fortfahren</Text>
           </Pressable>

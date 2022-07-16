@@ -16,7 +16,6 @@ import * as Yup from "yup";
 import { Formik, ErrorMessage } from "formik";
 import ButtonDefault from "../../components/UI/ButtonDefault";
 import BackArrow from "../../components/UI/BackArrow";
-import ProfileCircleSmall from "../../components/UI/ProfileCircleSmall";
 import CircleSmall from "../../components/UI/CircleSmall";
 // ----------------------------------------------------------------
 export default function SignupScreen({ navigation }) {
@@ -119,7 +118,7 @@ export default function SignupScreen({ navigation }) {
                           onBlur={handleBlur("email")}
                           value={values.email}
                           style={styles.formInput}
-                          placeholder="Gib hier deinen Email-Adresse ein"
+                          placeholder="Gib hier deine Email-Adresse ein"
                           keyboardType="email-address"
                         />
                       </View>
@@ -191,7 +190,7 @@ export default function SignupScreen({ navigation }) {
                     </View>
                     <View style={styles.buttonContainer}>
                       <ButtonDefault
-                        title="Submit"
+                        title="Registrieren"
                         onPress={handleSubmit}
                       ></ButtonDefault>
                     </View>
