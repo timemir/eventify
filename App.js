@@ -15,7 +15,13 @@ import ProfileScreen from "./screens/MainScreens/ProfileScreen";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import { createDrawerNavigator } from "@react-navigation/drawer";
 import ProfileCircleSmall from "./components/UI/ProfileCircleSmall";
+import LogOut from "./components/UI/LogOut";
+// Global Context
+import AuthContextProvider, { AuthContext } from "./store/auth-context";
+import { useContext } from "react";
 
+// Firebase auth
+import { auth } from "./store/firebase";
 // ----------------------------------------------------------------
 // Create React Navigation Navigators
 const Stack = createNativeStackNavigator();
@@ -24,6 +30,7 @@ const Drawer = createDrawerNavigator();
 // TEMP: Variable to simulate Auth Process to switch between Navigators in Component "Navigator"
 const SWITCH_SCREENS = false;
 // Drawer Navigator for HomeScreen
+
 function DrawerNavigator() {
   return (
     <Drawer.Navigator
@@ -52,6 +59,7 @@ function DrawerNavigator() {
         })}
       />
       <Drawer.Screen name="Profile" component={ProfileScreen} />
+      <Drawer.Screen name="Log Out" component={LogOut} />
     </Drawer.Navigator>
   );
 }
@@ -121,10 +129,11 @@ const MyTheme = {
   },
 };
 function Navigation() {
+  const authCtx = useContext(AuthContext);
   return (
     <NavigationContainer theme={MyTheme}>
-      {!SWITCH_SCREENS && <AuthenticationProcess />}
-      {SWITCH_SCREENS && <AuthenticatedStack />}
+      {!authCtx.isSignedIn && <AuthenticationProcess />}
+      {authCtx.isSignedIn && <AuthenticatedStack />}
     </NavigationContainer>
   );
 }
@@ -134,7 +143,9 @@ export default function App() {
   return (
     <>
       <StatusBar style="auto" />
-      <Navigation />
+      <AuthContextProvider>
+        <Navigation />
+      </AuthContextProvider>
     </>
   );
 }

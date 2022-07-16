@@ -8,7 +8,7 @@ import {
   ScrollView,
   KeyboardAvoidingView,
 } from "react-native";
-import React from "react";
+import React, { useContext } from "react";
 import { GlobalStyles } from "../../util/GlobalColors";
 
 // formik
@@ -17,12 +17,14 @@ import { Formik, ErrorMessage } from "formik";
 import ButtonDefault from "../../components/UI/ButtonDefault";
 import BackArrow from "../../components/UI/BackArrow";
 import CircleSmall from "../../components/UI/CircleSmall";
+import { auth } from "../../store/firebase";
+import { createUserWithEmailAndPassword } from "firebase/auth";
+import { AuthContext } from "../../store/auth-context";
+
 // ----------------------------------------------------------------
 export default function SignupScreen({ navigation }) {
   // Handle when pressing Registrieren
-  function confirmHandler() {
-    // TODO: Register user.
-  }
+  const authCtx = useContext(AuthContext);
   return (
     <SafeAreaView style={{ flex: 1 }}>
       <KeyboardAvoidingView
@@ -63,7 +65,9 @@ export default function SignupScreen({ navigation }) {
                     [Yup.ref("email"), null],
                     "Emails must match"
                   ),
-                  password: Yup.string().required("Required"),
+                  password: Yup.string()
+                    .min(6, "Dein Passwort muss mindestens 6 Zeichen haben.")
+                    .required("Required"),
                   passwordConfirmation: Yup.string().oneOf(
                     [Yup.ref("password"), null],
                     "Passwords must match"
@@ -71,7 +75,34 @@ export default function SignupScreen({ navigation }) {
                 })}
                 onSubmit={(values, formikActions) => {
                   console.log(values);
+                  createUserWithEmailAndPassword(
+                    auth,
+                    values.email,
+                    values.password
+                  )
+                    .then((userCredential) => {
+                      // Logged In
+                      const user = userCredential.user;
+                      console.log(user);
+
+                      // Sending User data to global context to use app-wide.
+                      authCtx.createUser(
+                        user.uid,
+                        values.firstName,
+                        values.lastName,
+                        user.email,
+                        user.emailVerified,
+                        user
+                      );
+                    })
+                    .catch((error) => {
+                      const errorCode = error.code;
+                      const errorMessage = error.message;
+                      // TODO: Display Error message to user.
+                      console.log(errorCode, errorMessage);
+                    });
                   formikActions.setSubmitting(false);
+                  // TODO: do not just navigate back, but create a loading spinner.
                   navigation.goBack();
                 }}
               >
