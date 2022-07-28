@@ -22,6 +22,8 @@ import { useContext } from "react";
 
 // Firebase auth
 import { auth } from "./store/firebase";
+import { getAuth, onAuthStateChanged } from "firebase/auth";
+
 // ----------------------------------------------------------------
 // Create React Navigation Navigators
 const Stack = createNativeStackNavigator();

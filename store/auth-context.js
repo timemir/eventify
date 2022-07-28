@@ -27,8 +27,8 @@ export default function AuthContextProvider({ children }) {
     firebaseData: {},
   });
   const [isSignedIn, setIsSignedIn] = useState(false);
-  function signInUser() {
-    setIsSignedIn(true);
+  function signInUser(bool) {
+    setIsSignedIn(bool);
   }
   function createUser(
     uid,
