@@ -13,6 +13,7 @@ export const AuthContext = createContext({
   isSignedIn: false,
   createUser: () => {},
   logOut: () => {},
+  signInUser: () => {},
 });
 
 export default function AuthContextProvider({ children }) {
@@ -26,7 +27,9 @@ export default function AuthContextProvider({ children }) {
     firebaseData: {},
   });
   const [isSignedIn, setIsSignedIn] = useState(false);
-
+  function signInUser() {
+    setIsSignedIn(true);
+  }
   function createUser(
     uid,
     firstName,
@@ -45,6 +48,7 @@ export default function AuthContextProvider({ children }) {
   const value = {
     user: user,
     isSignedIn: isSignedIn,
+    signInUser: signInUser,
     createUser: createUser,
     logOut: logOut,
   };

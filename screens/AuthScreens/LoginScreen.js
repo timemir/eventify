@@ -9,7 +9,7 @@ import {
   KeyboardAvoidingView,
   Pressable,
 } from "react-native";
-import React from "react";
+import React, { useContext } from "react";
 import { GlobalStyles } from "../../util/GlobalColors";
 
 // formik
@@ -18,6 +18,12 @@ import { Formik, ErrorMessage } from "formik";
 import ButtonDefault from "../../components/UI/ButtonDefault";
 import BackArrow from "../../components/UI/BackArrow";
 import CircleSmall from "../../components/UI/CircleSmall";
+// Firebase
+import { auth } from "../../store/firebase";
+import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
+// Context
+import { AuthContext } from "../../store/auth-context";
+
 // ----------------------------------------------------------------
 export default function LoginScreen({ navigation }) {
   // Handle when pressing Registrieren
@@ -28,6 +34,7 @@ export default function LoginScreen({ navigation }) {
   function forgotPasswordHandler() {
     // TODO: Do something with Firebase to reset password.
   }
+  const authCtx = useContext(AuthContext);
   return (
     <SafeAreaView style={{ flex: 1 }}>
       <KeyboardAvoidingView
@@ -63,8 +70,26 @@ export default function LoginScreen({ navigation }) {
                 })}
                 onSubmit={(values, formikActions) => {
                   console.log(values);
+                  signInWithEmailAndPassword(
+                    auth,
+                    values.email,
+                    values.password
+                  )
+                    .then((userCredential) => {
+                      // Signed in
+                      const user = userCredential.user;
+                      console.log(user);
+                      // Changing global user state to logged in.
+                      authCtx.signInUser();
+                    })
+                    .catch((error) => {
+                      const errorCode = error.code;
+                      const errorMessage = error.message;
+                      // TODO: Display Error message to user.
+                      console.log(errorCode, errorMessage);
+                    });
+
                   formikActions.setSubmitting(false);
-                  navigation.goBack();
                 }}
               >
                 {({
