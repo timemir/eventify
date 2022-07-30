@@ -69,7 +69,7 @@ export default function LoginScreen({ navigation }) {
                   password: Yup.string().required("Required"),
                 })}
                 onSubmit={(values, formikActions) => {
-                  console.log(values);
+                  // console.log(values);
                   signInWithEmailAndPassword(
                     auth,
                     values.email,
@@ -80,7 +80,7 @@ export default function LoginScreen({ navigation }) {
                       const user = userCredential.user;
                       console.log(user);
                       // Changing global user state to logged in.
-                      authCtx.signInUser();
+                      authCtx.signInUser(true);
                     })
                     .catch((error) => {
                       const errorCode = error.code;
