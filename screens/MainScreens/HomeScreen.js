@@ -25,7 +25,7 @@ const DUMMY_SECTIONS = [
   "Schach",
 ];
 
-export default function HomeScreen() {
+export default function HomeScreen(props) {
   //TODO: Create vertical scroll with expandable Sections that include Cards
   // that lead to a created event. compare the following:
   // wix.github.io/react-native-ui-lib/docs/components/basic/ExpandableSection
@@ -40,7 +40,7 @@ export default function HomeScreen() {
             flex
             height={160}
             style={{ marginBottom: 15, marginTop: 15 }}
-            onPress={() => console.log("Open Event Creation Modal")}
+            onPress={() => props.navigation.navigate("eventCreation")}
             borderRadius={15}
             activeOpacity={1}
           >
@@ -79,8 +79,10 @@ export default function HomeScreen() {
           </Card>
         </View>
         {/* RENDER CATEGORY SECTIONS: */}
-        {DUMMY_SECTIONS.map((categoryName) => {
-          return <EventSection sectionName={categoryName}></EventSection>;
+        {DUMMY_SECTIONS.map((categoryName, index) => {
+          return (
+            <EventSection key={index} sectionName={categoryName}></EventSection>
+          );
         })}
       </ScrollView>
     </SafeAreaView>
