@@ -29,6 +29,7 @@ export default function EventCreation() {
       <Text text40 grey20 marginB-30>
         Event Erstellung
       </Text>
+      {/* Inputfield - Event title */}
       <Card
         row
         padding-10
@@ -57,6 +58,7 @@ export default function EventCreation() {
           }
         />
       </Card>
+      {/* Inputfield - Event category */}
       <Card
         row
         padding-10
@@ -102,6 +104,7 @@ export default function EventCreation() {
           ))}
         </Picker>
       </Card>
+      {/* Inputfield - Event date */}
       <Card
         padding-10
         height={160}
@@ -127,9 +130,32 @@ export default function EventCreation() {
           color="grey"
           style={{ marginRight: 20 }}
         />
+      </Card>
+      {/* Inputfield - Event time */}
+      <Card
+        padding-10
+        height={160}
+        center
+        marginB-20
+        style={{ backgroundColor: "#FAA353" }}
+      >
+        <Ionicons
+          name="calendar-outline"
+          size={24}
+          color="grey"
+          style={{ marginRight: 20 }}
+        />
         <DateTimePicker
-          placeholder={"Wann soll dein Event starten?"}
+          placeholder={"Um wieviel Uhr findet dein Event statt?"}
           mode={"time"}
+          color="white"
+          containerStyle={{ padding: 10 }}
+        />
+        <Ionicons
+          name="stopwatch-outline"
+          size={24}
+          color="grey"
+          style={{ marginRight: 20 }}
         />
       </Card>
     </View>
