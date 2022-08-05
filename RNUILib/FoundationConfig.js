@@ -4,6 +4,7 @@ export default function loadFoundationConfig() {
   Colors.loadColors({
     primaryColor: "#ffffff",
     secondaryColor: "#FAA353",
+    greyBackgroundColor: "#cbcbcb23",
     textColor: "##221D23",
     errorColor: "#E63B2E",
     successColor: "#ADC76F",
