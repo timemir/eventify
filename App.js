@@ -22,7 +22,7 @@ import { useContext } from "react";
 
 // Firebase auth
 import { auth } from "./store/firebase";
-import { getAuth, onAuthStateChanged } from "firebase/auth";
+import { getAuth, onAuthStateChanged, signOut } from "firebase/auth";
 import EventCreation from "./screens/MainScreens/EventCreation";
 
 // ----------------------------------------------------------------
