@@ -24,6 +24,7 @@ import { useContext } from "react";
 import { auth } from "./store/firebase";
 import { getAuth, onAuthStateChanged, signOut } from "firebase/auth";
 import EventCreation from "./screens/MainScreens/EventCreation";
+import MapModal from "./components/EventCreation/MapModal";
 
 // ----------------------------------------------------------------
 
@@ -119,6 +120,7 @@ function AuthenticatedStack() {
       <Stack.Screen name="bottomTabs" component={BottomTabNavigator} />
       <Stack.Group screenOptions={{ presentation: "modal" }}>
         <Stack.Screen name="eventCreation" component={EventCreation} />
+        <Stack.Screen name="eventCreationMap" component={MapModal} />
       </Stack.Group>
     </Stack.Navigator>
   );
