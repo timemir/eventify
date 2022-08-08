@@ -17,6 +17,9 @@ import Ionicons from "react-native-vector-icons/Ionicons";
 // Maps
 import MapView, { Marker } from "react-native-maps";
 import { GooglePlacesAutocomplete } from "react-native-google-places-autocomplete";
+// Firebase Auth
+import { auth } from "../../store/firebase";
+import { getAuth, onAuthStateChanged } from "firebase/auth";
 // Incubators are experimental Components from RNUILib
 const { TextField } = Incubator;
 
@@ -28,11 +31,14 @@ const DUMMY_SECTIONS = [
   "Party",
   "Schach",
 ];
+// Main Function Component
 export default function EventCreation(props) {
+  // Creation of states (Data that gets send to the event object for event creation)
   const [title, setTitle] = useState("");
   const [category, setCategory] = useState("");
   const [date, setDate] = useState("");
   const [time, setTime] = useState("");
+  const [googleMapsData, setgoogleMapsData] = useState("");
   const [mapRegion, setMapRegion] = useState({
     latitude: 51.512408,
     longitude: 7.466741,
@@ -44,7 +50,12 @@ export default function EventCreation(props) {
     longitude: 0,
   });
   const [dialogState, setDialogState] = useState(false);
+  // ----------------------------------------------------------------
+  // Checking if user is signed in to get userID
+  const auth = getAuth();
+  const user = auth.currentUser;
 
+  // Rendering of the component
   return (
     <ScrollView>
       <View flex padding-20>
@@ -88,6 +99,7 @@ export default function EventCreation(props) {
             }
           />
         </Card>
+        {/* ---------------------------------------------------------------- */}
         {/* Inputfield - Event category */}
         <Card
           row
@@ -134,6 +146,7 @@ export default function EventCreation(props) {
             ))}
           </Picker>
         </Card>
+        {/* ---------------------------------------------------------------- */}
         {/* Inputfield - Event date */}
         <Card
           row
@@ -161,6 +174,7 @@ export default function EventCreation(props) {
             />
           </View>
         </Card>
+        {/* ---------------------------------------------------------------- */}
         {/* Inputfield - Event time */}
         <Card
           row
@@ -190,13 +204,14 @@ export default function EventCreation(props) {
             />
           </View>
         </Card>
+        {/* ---------------------------------------------------------------- */}
         {/* Inputfield - Map */}
         <Dialog
           useSafeArea
           key={1}
           bottom={true}
           height={"95%"}
-          panDirection={Dialog.directions.DOWN}
+          // panDirection={Dialog.directions.DOWN}
           containerStyle={styles.roundedDialog}
           visible={dialogState}
           onDismiss={() => setDialogState(false)}
@@ -217,8 +232,10 @@ export default function EventCreation(props) {
           supportedOrientations={["portrait", "landscape"]}
           ignoreBackgroundPress={true}
         >
+          {/* Content inside the Dialog - BIG MAP */}
           <View flex margin-10>
             <View flex centerH>
+              {/* Search Bar with Google Integration */}
               <GooglePlacesAutocomplete
                 placeholder="Suche nach einem Ort"
                 fetchDetails={true}
@@ -228,6 +245,7 @@ export default function EventCreation(props) {
                 onPress={(data, details = null) => {
                   // 'details' is provided when fetchDetails = true
                   console.log(data, details);
+                  setgoogleMapsData({ data: data, details: details });
                   setMapRegion({
                     latitude: details.geometry.location.lat,
                     longitude: details.geometry.location.lng,
@@ -236,6 +254,7 @@ export default function EventCreation(props) {
                   });
                 }}
                 query={{
+                  //TODO: REMOVE API KEY IN PRODUCTION!
                   key: "AIzaSyAuZPnw7i5OQrwKWytiyvhV6wCCeEOgxps",
                   language: "de",
                   components: "country:DE",
@@ -294,9 +313,10 @@ export default function EventCreation(props) {
             />
           </View>
         </Dialog>
+        {/* Inputfield - Small Map */}
         <Pressable
           onPress={() => {
-            // props.navigation.navigate("eventCreationMap");
+            // props.navigation.navigate("eventCreationMap"); // Alternative way of making the big map
             setDialogState(true);
           }}
         >
@@ -330,9 +350,19 @@ export default function EventCreation(props) {
           backgroundColor={Colors.secondaryColor}
           borderRadius={10}
           onPress={(event) => {
-            props.navigation.goBack();
             console.log("Create Event");
             //TODO: Combine all the states of the Inputfields into an object and then send this object to Firebase to create an Event.
+            const eventObject = {
+              title: title,
+              userID: user.uid,
+              category: category,
+              date: date,
+              time: time,
+              googleMapsData: googleMapsData,
+              coords: [mapRegion.longitude, mapRegion.latitude],
+              mapMarkerCoords: mapMarker,
+            };
+            props.navigation.goBack();
           }}
         />
       </View>
