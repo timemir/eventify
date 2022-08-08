@@ -11,8 +11,10 @@ import {
   Button,
   Dialog,
   Constants,
+  LoaderScreen,
+  Toast,
 } from "react-native-ui-lib";
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import Ionicons from "react-native-vector-icons/Ionicons";
 // Maps
 import MapView, { Marker } from "react-native-maps";
@@ -20,6 +22,10 @@ import { GooglePlacesAutocomplete } from "react-native-google-places-autocomplet
 // Firebase Auth
 import { auth } from "../../store/firebase";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
+// Axios - HTTP Request
+import axios from "axios";
+// Global Auth Context
+import { AuthContext } from "../../store/auth-context";
 // Incubators are experimental Components from RNUILib
 const { TextField } = Incubator;
 
@@ -50,6 +56,10 @@ export default function EventCreation(props) {
     longitude: 0,
   });
   const [dialogState, setDialogState] = useState(false);
+  // HTTP POST State
+  const [httpPosting, setHttpPosting] = useState(false);
+  // Final Validation State
+  const [finalValidationFailed, setFinalValidationFailed] = useState(false);
   // ----------------------------------------------------------------
   // Checking if user is signed in to get userID
   const auth = getAuth();
@@ -59,6 +69,13 @@ export default function EventCreation(props) {
   return (
     <ScrollView>
       <View flex padding-20>
+        {/* Render LoaderScreen when we are Creating a new event*/}
+        {httpPosting && (
+          <View flex padding-200>
+            <LoaderScreen message={"Creating Event..."} color={Colors.grey40} />
+          </View>
+        )}
+
         <Text text40 grey20 marginB-30 center>
           Event Erstellung
         </Text>
@@ -72,6 +89,8 @@ export default function EventCreation(props) {
           style={{ backgroundColor: Colors.greyBackgroundColor }}
         >
           <TextField
+            autoFocus
+            autoCapitalize={"sentences"}
             placeholder="Wie soll dein Event heißen?"
             floatingPlaceholder
             floatingPlaceholderStyle={{
@@ -80,7 +99,7 @@ export default function EventCreation(props) {
               width: "100%",
             }}
             value={title}
-            onChange={(item) => setTitle(item)}
+            onChangeText={(item) => setTitle(item)}
             containerStyle={{ flexGrow: 1 }}
             fieldStyle={styles.withUnderline}
             color={Colors.secondaryColor}
@@ -170,7 +189,9 @@ export default function EventCreation(props) {
               color={Colors.secondaryColor}
               containerStyle={{ height: 30, width: "100%" }}
               value={date}
-              onChange={(item) => setDate(item)}
+              onChange={(value) => {
+                setDate(value);
+              }}
             />
           </View>
         </Card>
@@ -200,7 +221,9 @@ export default function EventCreation(props) {
               minuteInterval={5}
               is24Hour={true}
               value={time}
-              onChange={(item) => setTime(item)}
+              onChange={(value) => {
+                setTime(value);
+              }}
             />
           </View>
         </Card>
@@ -339,6 +362,7 @@ export default function EventCreation(props) {
               <MapView
                 style={{ alignSelf: "stretch", height: "100%" }}
                 region={mapRegion}
+                provider="google"
               />
             </View>
           </Card>
@@ -350,21 +374,58 @@ export default function EventCreation(props) {
           backgroundColor={Colors.secondaryColor}
           borderRadius={10}
           onPress={(event) => {
-            console.log("Create Event");
-            //TODO: Combine all the states of the Inputfields into an object and then send this object to Firebase to create an Event.
-            const eventObject = {
-              title: title,
-              userID: user.uid,
-              category: category,
-              date: date,
-              time: time,
-              googleMapsData: googleMapsData,
-              coords: [mapRegion.longitude, mapRegion.latitude],
-              mapMarkerCoords: mapMarker,
-            };
-            props.navigation.goBack();
+            if (date != "" && time != "" && category != "") {
+              console.log("Create Event");
+              //TODO: Combine all the states of the Inputfields into an object and then send this object to Firebase to create an Event.
+              const eventObject = {
+                title: title,
+                user: {
+                  userID: user.uid,
+                  userName: user.displayName,
+                },
+                category: category.value,
+                date: date.toISOString().slice(0, 10),
+                time: time.toISOString().slice(11, 19),
+                googleMapsData: googleMapsData,
+                coords: {
+                  longitude: mapRegion.longitude,
+                  latitude: mapRegion.latitude,
+                },
+                mapMarkerCoords: mapMarker,
+                participants: [
+                  { userID: user.uid, userName: user.displayName },
+                ],
+              };
+              setHttpPosting(true);
+              axios
+                .post(
+                  "https://eventify-43747-default-rtdb.europe-west1.firebasedatabase.app/events.json",
+                  eventObject
+                )
+                .then(function (response) {
+                  console.log(response);
+                  setHttpPosting(false);
+                  props.navigation.goBack();
+                })
+                .catch(function (error) {
+                  console.log(error);
+                  setHttpPosting(false);
+                  console.log("Try again");
+                });
+            } else {
+              setFinalValidationFailed(true);
+            }
           }}
         />
+        <Toast
+          visible={finalValidationFailed}
+          position={"top"}
+          centerMessage={true}
+          message="Bitte gib in jedem Feld Daten an."
+          backgroundColor={Colors.$iconDanger}
+          autoDismiss={5000}
+          onDismiss={() => setFinalValidationFailed(false)}
+        ></Toast>
       </View>
     </ScrollView>
   );

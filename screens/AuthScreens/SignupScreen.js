@@ -74,7 +74,6 @@ export default function SignupScreen({ navigation }) {
                   ),
                 })}
                 onSubmit={(values, formikActions) => {
-                  console.log(values);
                   createUserWithEmailAndPassword(
                     auth,
                     values.email,
@@ -84,6 +83,7 @@ export default function SignupScreen({ navigation }) {
                       // Logged In
                       const user = userCredential.user;
                       console.log(user);
+                      user.displayName = `${values.firstName} ${values.lastName}`;
 
                       // Sending User data to global context to use app-wide.
                       authCtx.createUser(
