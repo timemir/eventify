@@ -1,6 +1,6 @@
 import { SafeAreaView, StyleSheet, ScrollView } from "react-native";
 import Ionicons from "react-native-vector-icons/Ionicons";
-import React from "react";
+import React, { useEffect, useState } from "react";
 // RNUILib
 import {
   Card,
@@ -16,19 +16,44 @@ import EventSection from "../../components/UI/HomeScreen/EventSection";
 import loadFoundationConfig from "../../RNUILib/FoundationConfig";
 import { GlobalStyles } from "../../util/GlobalColors";
 loadFoundationConfig();
-//TODO: Fetch Category Names from Firebase
-const DUMMY_SECTIONS = [
-  "StadtDORTMUND",
-  "Schwimmen",
-  "Joggen",
-  "Party",
-  "Schach",
-];
+
+// http helper functions
+import { fetchAllEvents, fetchAllCategories } from "../../store/http";
+// Navigation
+import { useIsFocused } from "@react-navigation/native";
 
 export default function HomeScreen(props) {
-  //TODO: Create vertical scroll with expandable Sections that include Cards
-  // that lead to a created event. compare the following:
-  // wix.github.io/react-native-ui-lib/docs/components/basic/ExpandableSection
+  // State for all Events
+  const [fetchedCategories, setFetchedCategories] = useState([]);
+  // All Events as an Object inside an Array -> [{ }, { }, { }]
+  const [fetchedEvents, setFetchedEvents] = useState([]);
+
+  // Fetch all Categories
+  useEffect(() => {
+    async function getCategories() {
+      const categories = await fetchAllCategories();
+      setFetchedCategories(categories);
+    }
+    getCategories();
+  }, []);
+
+  // React Navigation Hook
+  const isFocused = useIsFocused();
+  // Fetch all Events
+  useEffect(() => {
+    // Rerun useEffect Function if we re-enter the HomeScreen
+    if (isFocused) {
+      // Helper Function, because we cannot set useEffect function as async. not allowed!
+      async function getEvents() {
+        const events = await fetchAllEvents();
+        setFetchedEvents(events);
+      }
+      getEvents();
+
+      // DO NOT PUT ANYTHING OUTSIDE IF STATEMENT!
+    }
+  }, [isFocused]);
+
   return (
     <SafeAreaView>
       <ScrollView>
@@ -40,7 +65,9 @@ export default function HomeScreen(props) {
             flex
             height={160}
             style={{ marginBottom: 15, marginTop: 15 }}
-            onPress={() => props.navigation.navigate("eventCreation")}
+            onPress={() =>
+              props.navigation.navigate("eventCreation", fetchedCategories)
+            }
             borderRadius={15}
             activeOpacity={1}
           >
@@ -79,9 +106,23 @@ export default function HomeScreen(props) {
           </Card>
         </View>
         {/* RENDER CATEGORY SECTIONS: */}
-        {DUMMY_SECTIONS.map((categoryName, index) => {
+        {fetchedCategories.map((categoryName, index) => {
           return (
-            <EventSection key={index} sectionName={categoryName}></EventSection>
+            <EventSection
+              key={index}
+              sectionName={categoryName}
+              categoryEventData={() => {
+                const eventsListByCategory = [];
+
+                fetchedEvents.forEach((item) => {
+                  if (item.category === categoryName) {
+                    eventsListByCategory.push(item);
+                  }
+                });
+
+                return eventsListByCategory;
+              }}
+            ></EventSection>
           );
         })}
       </ScrollView>

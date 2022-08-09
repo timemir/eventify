@@ -65,6 +65,8 @@ export default function EventCreation(props) {
   const auth = getAuth();
   const user = auth.currentUser;
 
+  // Navigation params passed from HomeScreen
+  const fetchedCategories = props.route.params;
   // Rendering of the component
   return (
     <ScrollView>
@@ -160,7 +162,7 @@ export default function EventCreation(props) {
               placeholderTextColor: Colors.grey20,
             }}
           >
-            {DUMMY_SECTIONS.map((option, index) => (
+            {fetchedCategories.map((option, index) => (
               <Picker.Item key={index} value={option} label={option} />
             ))}
           </Picker>

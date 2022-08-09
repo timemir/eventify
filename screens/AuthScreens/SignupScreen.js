@@ -20,7 +20,8 @@ import CircleSmall from "../../components/UI/CircleSmall";
 import { auth } from "../../store/firebase";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { AuthContext } from "../../store/auth-context";
-
+// axios HTTP Requests
+import axios from "axios";
 // ----------------------------------------------------------------
 export default function SignupScreen({ navigation }) {
   // Handle when pressing Registrieren
@@ -94,6 +95,26 @@ export default function SignupScreen({ navigation }) {
                         user.emailVerified,
                         user
                       );
+                      const userObject = {
+                        uid: user.uid,
+                        firstName: values.firstName,
+                        lastName: values.lastName,
+                        email: user.email,
+                        emailVerified: user.emailVerified,
+                      };
+                      // Sending User data to Firebase
+                      axios
+                        .post(
+                          "https://eventify-43747-default-rtdb.europe-west1.firebasedatabase.app/users.json",
+                          userObject
+                        )
+                        .then(function (response) {
+                          console.log(response);
+                        })
+                        .catch(function (error) {
+                          console.log(error);
+                          console.log("(Fehler) Keine Verbindung zum Server");
+                        });
                     })
                     .catch((error) => {
                       const errorCode = error.code;
