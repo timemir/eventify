@@ -2,7 +2,11 @@ import "react-native-gesture-handler";
 import { StatusBar } from "expo-status-bar";
 import { Text, View } from "react-native";
 //Navigation
-import { NavigationContainer, DefaultTheme } from "@react-navigation/native";
+import {
+  NavigationContainer,
+  DefaultTheme,
+  useNavigation,
+} from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import LoginScreen from "./screens/AuthScreens/LoginScreen";
 import SignupScreen from "./screens/AuthScreens/SignupScreen";
@@ -18,14 +22,17 @@ import ProfileCircleSmall from "./components/UI/ProfileCircleSmall";
 import LogOut from "./components/UI/LogOut";
 // Global Context
 import AuthContextProvider, { AuthContext } from "./store/auth-context";
-import { useContext } from "react";
+import { useContext, useEffect, useState } from "react";
 
 // Firebase auth
 import { auth } from "./store/firebase";
 import { getAuth, onAuthStateChanged, signOut } from "firebase/auth";
 import EventCreation from "./screens/MainScreens/EventCreation";
 import MapModal from "./components/EventCreation/MapModal";
+import FirstTimeUserScreen from "./screens/AuthScreens/FirstTimeUserScreen";
 
+// Async Storage for tracking if we have a first time user
+import AsyncStorage from "@react-native-async-storage/async-storage";
 // ----------------------------------------------------------------
 
 // Create React Navigation Navigators
@@ -98,6 +105,7 @@ function BottomTabNavigator() {
       />
       <BottomTab.Screen name="Search" component={SearchScreen} />
       <BottomTab.Screen name="Map" component={MapScreen} />
+      <BottomTab.Screen name="TESTING" component={FirstTimeUserScreen} />
     </BottomTab.Navigator>
   );
 }
@@ -115,9 +123,30 @@ function AuthenticationProcess() {
 
 // Screens after being authenticated by Firebase
 function AuthenticatedStack() {
+  // Initially the user is NOT a first time user. We set the AsyncStorage Variable to "1", when creating a user (Check SignupScreen.js)
+  // const [firstTimeUser, setFirstTimeUser] = useState(false);
+  const navigation = useNavigation();
+  // Check if the data in the AsyncStorage under the key "@first_time_user" is not null, then we have a first time User
+  async function getFirstimeUser() {
+    try {
+      const value = await AsyncStorage.getItem("@first_time_user");
+      if (value !== null && value !== "0") {
+        navigation.navigate("firstTimeUser");
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  }
+  // When ever starting the app for the first time, we check if the user is a first time user.
+  // We store the value we check in a async storage, so it persists after restarting the app (local storage)
+  useEffect(() => {
+    getFirstimeUser();
+  }, []);
+
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
       <Stack.Screen name="bottomTabs" component={BottomTabNavigator} />
+      <Stack.Screen name="firstTimeUser" component={FirstTimeUserScreen} />
       <Stack.Group screenOptions={{ presentation: "modal" }}>
         <Stack.Screen name="eventCreation" component={EventCreation} />
         <Stack.Screen name="eventCreationMap" component={MapModal} />

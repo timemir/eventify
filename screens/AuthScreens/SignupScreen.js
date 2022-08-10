@@ -22,6 +22,10 @@ import { createUserWithEmailAndPassword } from "firebase/auth";
 import { AuthContext } from "../../store/auth-context";
 // axios HTTP Requests
 import axios from "axios";
+
+// Async Storage to store first time user created
+import AsyncStorage from "@react-native-async-storage/async-storage";
+
 // ----------------------------------------------------------------
 export default function SignupScreen({ navigation }) {
   // Handle when pressing Registrieren
@@ -122,6 +126,19 @@ export default function SignupScreen({ navigation }) {
                       // TODO: Display Error message to user.
                       console.log(errorCode, errorMessage);
                     });
+
+                  // Store first time user variable in async storage
+                  const setFirsttimeUser = async (value) => {
+                    try {
+                      await AsyncStorage.setItem("@first_time_user", value);
+                      console.log("Set AsyncStorage successfully");
+                      console.log(value);
+                    } catch (error) {
+                      // saving error
+                      console.log(error);
+                    }
+                  };
+                  setFirsttimeUser("1");
                   formikActions.setSubmitting(false);
                   // TODO: do not just navigate back, but create a loading spinner.
                   navigation.goBack();
