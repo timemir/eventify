@@ -20,6 +20,9 @@ import InterestsLists from "../../components/FirstTimeUsers/InterestsLists";
 import CitySelection from "../../components/FirstTimeUsers/CitySelection";
 import PhotoUpload from "../../components/FirstTimeUsers/PhotoUpload";
 
+// Navigation
+import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
+
 export default function FirstTimeUserScreen(props) {
   async function setFirstTimeUserStatus() {
     try {
@@ -237,8 +240,10 @@ export default function FirstTimeUserScreen(props) {
     );
   }
   // ----------------------------------------------------------------
+  // Tab Bar Height Constant
+  const tabBarHeight = useBottomTabBarHeight();
   return (
-    <View useSafeArea flex>
+    <View useSafeArea flex style={{ marginBottom: tabBarHeight }}>
       <View flex-1>
         <Wizard
           activeIndex={activeIndex}
@@ -280,5 +285,6 @@ const styles = StyleSheet.create({
   stepContainer: {
     flex: 1,
     justifyContent: "space-between",
+    marginBottom: tabBarHeight,
   },
 });

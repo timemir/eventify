@@ -1,4 +1,4 @@
-import { StyleSheet } from "react-native";
+import { StyleSheet, ScrollView } from "react-native";
 import React, { useState, useEffect } from "react";
 // RNUILib
 import {
@@ -38,15 +38,32 @@ export default function InterestsLists() {
   // ----------------------------------------------------------------
 
   return (
-    <View flex>
-      <GridList
-        data={fetchedCategories}
-        renderItem={renderItem}
-        maxItemWidth={200}
-        numColumns={2}
-        horizontal={false}
-      />
-    </View>
+    <ScrollView>
+      <View flex>
+        <View center marginH-30>
+          <View marginV-20>
+            <Text h1 center text50BL>
+              Wähle einige Kategorien aus, die dich interessieren!
+            </Text>
+          </View>
+          <View marginB-30>
+            <Text center grey40>
+              Erstelle ein Interessenprofil, sodass wir dir persönlich relevante
+              Events anzeigen können.
+            </Text>
+          </View>
+        </View>
+        <View flex>
+          <GridList
+            data={fetchedCategories}
+            renderItem={renderItem}
+            maxItemWidth={200}
+            numColumns={2}
+            horizontal={false}
+          />
+        </View>
+      </View>
+    </ScrollView>
   );
 }
 

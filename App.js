@@ -96,6 +96,27 @@ function BottomTabNavigator() {
         },
         tabBarActiveTintColor: "#FAA353",
         tabBarInactiveTintColor: "gray",
+        tabBarOptions: {
+          style: {
+            backgroundColor: "#dd2e2e",
+            position: "absolute",
+            bottom: 0,
+            padding: 10,
+            // width: DEVICE_WIDTH,
+            height: 54,
+          },
+        },
+        tabBarStyle: {
+          borderWidth: 0.5,
+          borderBottomWidth: 1,
+          backgroundColor: "white",
+          borderTopLeftRadius: 30,
+          borderTopRightRadius: 30,
+          borderColor: "transparent",
+          overflow: "hidden",
+          position: "absolute",
+          zIndex: 8,
+        },
       })}
     >
       <BottomTab.Screen

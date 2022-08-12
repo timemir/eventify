@@ -28,7 +28,7 @@ export default function InterestItem({ item }) {
   return (
     <Card flex onPress={onPressHandler}>
       <Card.Section imageSource={itemImage} imageStyle={styles.itemImage} />
-      <View padding-s2>
+      <View center padding-s2>
         <Text $textDefault>
           <Text color={Colors.secondaryColor}>#</Text>
           {`${item}`}
