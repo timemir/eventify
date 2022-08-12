@@ -285,6 +285,6 @@ const styles = StyleSheet.create({
   stepContainer: {
     flex: 1,
     justifyContent: "space-between",
-    marginBottom: tabBarHeight,
+    // marginBottom: tabBarHeight,
   },
 });
