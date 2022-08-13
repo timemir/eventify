@@ -13,14 +13,16 @@ import {
 } from "react-native-ui-lib";
 import Ionicons from "react-native-vector-icons/Ionicons";
 
-export default function InterestItem({ item }) {
+export default function InterestItem(props) {
   // Each Item gets a State that tracks if the Category got liked
   const [categoryLiked, setCategoryLiked] = useState(false);
   // Function that gets executed when pressing a card
   function onPressHandler() {
-    console.log(categoryLiked ? "Liked" : "Disliked");
+    console.log(categoryLiked ? "Disliked" : "Liked");
     setCategoryLiked(!categoryLiked);
-    console.log(categoryLiked);
+    // console.log(categoryLiked);
+    // Send the category name back to the parent and there put it into an array of all liked categories.
+    props.onLiked(props.item);
   }
 
   //
@@ -31,7 +33,7 @@ export default function InterestItem({ item }) {
       <View center padding-s2>
         <Text $textDefault>
           <Text color={Colors.secondaryColor}>#</Text>
-          {`${item}`}
+          {`${props.item}`}
         </Text>
 
         {/* {item.inventory.status === 'Out of Stock' && (

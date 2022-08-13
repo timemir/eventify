@@ -16,7 +16,7 @@ import {
 
 import { cities } from "../../util/cities.js";
 
-export default function CitySelection() {
+export default function CitySelection(props) {
   const [selectedCity, setSelectedCity] = useState("");
   return (
     <View flex center paddingT-100>
@@ -46,7 +46,10 @@ export default function CitySelection() {
           }}
           value={selectedCity}
           enableModalBlur={false}
-          onChange={(item) => setSelectedCity(item)}
+          onChange={(item) => {
+            setSelectedCity(item);
+            props.onChange(selectedCity);
+          }}
           topBarProps={{ title: "Städte", useSafeArea: true }}
           migrateTextField
           style={{
@@ -73,6 +76,10 @@ export default function CitySelection() {
             <Picker.Item key={index} value={option} label={option} />
           ))}
         </Picker>
+        <Button
+          label="Print current Value"
+          onPress={() => console.log(selectedCity)}
+        />
       </View>
     </View>
   );

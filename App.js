@@ -144,9 +144,9 @@ function AuthenticationProcess() {
 
 // Screens after being authenticated by Firebase
 function AuthenticatedStack() {
-  // Initially the user is NOT a first time user. We set the AsyncStorage Variable to "1", when creating a user (Check SignupScreen.js)
-  // const [firstTimeUser, setFirstTimeUser] = useState(false);
   const navigation = useNavigation();
+
+  // Initially the user is NOT a first time user. We set the AsyncStorage Variable to "1", when creating a user (Check SignupScreen.js)
   // Check if the data in the AsyncStorage under the key "@first_time_user" is not null, then we have a first time User
   async function getFirstimeUser() {
     try {

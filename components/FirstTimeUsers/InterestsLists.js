@@ -15,7 +15,7 @@ import {
 import { fetchAllCategories } from "../../store/http";
 import InterestItem from "./InterestItem";
 
-export default function InterestsLists() {
+export default function InterestsLists(props) {
   // Get Categories from Firebase
   const [fetchedCategories, setFetchedCategories] = useState([]);
   useEffect(() => {
@@ -26,14 +26,28 @@ export default function InterestsLists() {
     getCategories();
   }, []);
   // ----------------------------------------------------------------
+  // CHILD TO PARENT DATA LOGIC
   // Background Array that Keeps track of all liked categories
-  const likedCategories = [];
+  let likedCategories = [];
 
+  function childToParent(childData) {
+    if (likedCategories.includes(childData)) {
+      likedCategories = likedCategories.filter((item) => item !== childData);
+      console.log(likedCategories);
+    } else {
+      likedCategories.push(childData);
+      console.log(likedCategories);
+      // Send the likedCategories array up to the FirstTimeUserScreen
+    }
+    props.onChange(likedCategories);
+  }
+
+  // ----------------------------------------------------------------
   // Each individual rendered Interest to select
   function renderItem({ item }) {
     // Rendering of each Card with Category
 
-    return <InterestItem item={item} />;
+    return <InterestItem item={item} onLiked={childToParent} />;
   }
   // ----------------------------------------------------------------
 

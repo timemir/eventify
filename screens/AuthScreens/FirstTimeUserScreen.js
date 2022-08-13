@@ -1,5 +1,5 @@
 import { StyleSheet, SafeAreaView } from "react-native";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 // RNUILib
 import {
@@ -24,9 +24,9 @@ import PhotoUpload from "../../components/FirstTimeUsers/PhotoUpload";
 import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
 
 export default function FirstTimeUserScreen(props) {
-  async function setFirstTimeUserStatus() {
+  async function removeFirstTimeUserStatus() {
     try {
-      await AsyncStorage.setItem("@first_time_user", "1");
+      await AsyncStorage.setItem("@first_time_user", "0");
       console.log("Set AsyncStorage successfully");
       props.navigation.goBack();
     } catch (error) {
@@ -49,18 +49,8 @@ export default function FirstTimeUserScreen(props) {
 
     return state;
   }
-  // Switch Logic for Showing content
-  function renderCurrentStep() {
-    switch (activeIndex) {
-      case 0:
-      default:
-        return renderInterests();
-      case 1:
-        return renderCity();
-      case 2:
-        return renderPhoto();
-    }
-  }
+  // ----------------------------------------------------------------
+
   // Switching Buttons
   function renderPrevButton() {
     return (
@@ -81,27 +71,9 @@ export default function FirstTimeUserScreen(props) {
           },
         }}
       />
-      // <Button
-      //   backgroundColor={Colors.secondaryColor}
-      //   size={Button.sizes.large}
-      //   label={"Zurück"}
-      //   marginV-10
-      //   onPress={() => {
-      //     const prevActiveIndex = activeIndex;
-      //     if (prevActiveIndex === 0) {
-      //       return;
-      //     } else {
-      //       setActiveIndex((prevState) => prevState - 1);
-      //     }
-      //   }}
-      // />
     );
   }
-  // Executed after pressing "Fertig" in Step 3.
-  function finished() {
-    console.log("Done - Ship content");
-    // TODO: Send Data to Firebase, Set AsyncStorage key "@first_time_user" to 0
-  }
+
   function renderNextButton(disabled) {
     const label = activeIndex === 2 ? "Fertig" : "Weiter";
 
@@ -144,54 +116,38 @@ export default function FirstTimeUserScreen(props) {
           },
         }}
       />
-
-      // <Button
-      //   backgroundColor={Colors.secondaryColor}
-      //   size={Button.sizes.large}
-      //   label={label}
-      //   marginV-10
-      //   onPress={() => {
-      //     const prevActiveIndex = activeIndex;
-      //     const prevCompletedStepIndex = completedStepIndex;
-
-      //     const done = prevActiveIndex === 2;
-      //     if (done) {
-      //       finished();
-      //       return;
-      //     }
-
-      //     setActiveIndex(prevActiveIndex + 1);
-      //     setCompletedStepIndex(prevCompletedStepIndex);
-
-      //     if (
-      //       !prevCompletedStepIndex ||
-      //       prevCompletedStepIndex < prevActiveIndex
-      //     ) {
-      //       setCompletedStepIndex(prevActiveIndex);
-      //     }
-
-      //     if (
-      //       activeIndex !== prevActiveIndex ||
-      //       completedStepIndex !== prevCompletedStepIndex
-      //     ) {
-      //       setActiveIndex(activeIndex);
-      //       setCompletedStepIndex(completedStepIndex);
-      //     }
-      //   }}
-      //   disabled={disabled}
-      // />
     );
+  }
+  // ----------------------------------------------------------------
+  // Switch Logic for Showing content
+  function renderCurrentStep() {
+    switch (activeIndex) {
+      case 0:
+      default:
+        return renderInterests();
+      case 1:
+        return renderCity();
+      case 2:
+        return renderPhoto();
+    }
   }
 
   // MAIN CONTENT
   // Interests Selection
+
+  function childToParentInterests(childData) {
+    const likedCategories = childData;
+    console.log("likedCategories inside first time user screen");
+    console.log(likedCategories);
+  }
+
   function renderInterests() {
     const stopNextStep = false;
     return (
       <View style={styles.stepContainer}>
         {console.log(activeIndex)}
         <View flex marginV-15>
-          <InterestsLists />
+          <InterestsLists onChange={childToParentInterests} />
         </View>
         <View row spread>
           <View flex left></View>
@@ -203,13 +159,19 @@ export default function FirstTimeUserScreen(props) {
     );
   }
   // City Selection
+  function childToParentCity(childData) {
+    const selectedCity = childData;
+    console.log(selectedCity);
+  }
+
   function renderCity() {
     const stopNextStep = false;
 
     return (
       <View style={styles.stepContainer}>
         {console.log(activeIndex)}
-        <CitySelection />
+        <CitySelection onChange={childToParentCity} />
+        <Button label="Print" onPress={() => console.log(selectedCity)} />
         <View row spread>
           <View flex left>
             {renderPrevButton()}
@@ -239,9 +201,19 @@ export default function FirstTimeUserScreen(props) {
       </View>
     );
   }
+
+  // Executed after pressing "Fertig" in Step 3.
+  function finished() {
+    console.log("Done - Ship content");
+    // TODO: Send Data to Firebase, Set AsyncStorage key "@first_time_user" to 0
+    removeFirstTimeUserStatus();
+  }
+
   // ----------------------------------------------------------------
   // Tab Bar Height Constant
   const tabBarHeight = useBottomTabBarHeight();
+
+  // Main return
   return (
     <View useSafeArea flex style={{ marginBottom: tabBarHeight }}>
       <View flex-1>
