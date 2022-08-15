@@ -22,6 +22,22 @@ export async function fetchUserById(uid) {
     }
   }
 }
+export async function updateFirstTimeUserById(uid, firstTimeUserData) {
+  try {
+    const userList = await axios.get(DB_LINK + "users.json");
+
+    for (const key in userList.data) {
+      if (uid === userList.data[key].uid) {
+        const response = await axios.put(DB_LINK + "users/" + key + ".json", {
+          ...userList.data[key],
+          ...firstTimeUserData,
+        });
+      }
+    }
+  } catch (error) {
+    console.log(error);
+  }
+}
 
 export async function fetchAllEvents() {
   const response = await axios.get(DB_LINK + "events.json");

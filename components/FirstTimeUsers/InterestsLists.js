@@ -28,19 +28,23 @@ export default function InterestsLists(props) {
   // ----------------------------------------------------------------
   // CHILD TO PARENT DATA LOGIC
   // Background Array that Keeps track of all liked categories
-  let likedCategories = [];
-
-  function childToParent(childData) {
-    if (likedCategories.includes(childData)) {
-      likedCategories = likedCategories.filter((item) => item !== childData);
-      console.log(likedCategories);
+  const [likedCategories, setLikedCategories] = useState([]);
+  function childToParent(categoryNameFromChild) {
+    if (likedCategories.includes(categoryNameFromChild)) {
+      const filteredLikedCategories = likedCategories.filter(
+        (item) => item !== categoryNameFromChild
+      );
+      console.log("REMOVE");
+      setLikedCategories([...filteredLikedCategories]);
     } else {
-      likedCategories.push(childData);
-      console.log(likedCategories);
-      // Send the likedCategories array up to the FirstTimeUserScreen
+      console.log("ADD");
+      setLikedCategories((prevState) => [...prevState, categoryNameFromChild]);
     }
-    props.onChange(likedCategories);
   }
+  // Send the likedCategories array up to the FirstTimeUserScreen (when ever likedCategories gets updated)
+  useEffect(() => {
+    props.onChange(likedCategories);
+  }, [likedCategories]);
 
   // ----------------------------------------------------------------
   // Each individual rendered Interest to select

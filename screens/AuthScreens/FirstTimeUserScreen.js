@@ -20,8 +20,12 @@ import InterestsLists from "../../components/FirstTimeUsers/InterestsLists";
 import CitySelection from "../../components/FirstTimeUsers/CitySelection";
 import PhotoUpload from "../../components/FirstTimeUsers/PhotoUpload";
 
-// Navigation
-import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
+// HTTP Requests
+import axios from "axios";
+import { updateFirstTimeUserById } from "../../store/http";
+
+// Firebase Auth
+import { getAuth } from "firebase/auth";
 
 export default function FirstTimeUserScreen(props) {
   async function removeFirstTimeUserStatus() {
@@ -37,6 +41,10 @@ export default function FirstTimeUserScreen(props) {
   // Wizard States
   const [activeIndex, setActiveIndex] = useState(0);
   const [completedStepIndex, setCompletedStepIndex] = useState(undefined);
+  // Selection States
+  const [selectedInterests, setSelectedInterests] = useState([]);
+  const [selectedCity, setSelectedCity] = useState("");
+  const [selectedPhoto, setSelectedPhoto] = useState({});
 
   // Logic for showing the header
   function getStepState(index) {
@@ -133,19 +141,17 @@ export default function FirstTimeUserScreen(props) {
   }
 
   // MAIN CONTENT
+
   // Interests Selection
 
-  function childToParentInterests(childData) {
-    const likedCategories = childData;
-    console.log("likedCategories inside first time user screen");
-    console.log(likedCategories);
+  function childToParentInterests(likedCategoriesArray) {
+    setSelectedInterests([...likedCategoriesArray]);
   }
 
   function renderInterests() {
     const stopNextStep = false;
     return (
       <View style={styles.stepContainer}>
-        {console.log(activeIndex)}
         <View flex marginV-15>
           <InterestsLists onChange={childToParentInterests} />
         </View>
@@ -159,19 +165,17 @@ export default function FirstTimeUserScreen(props) {
     );
   }
   // City Selection
+
   function childToParentCity(childData) {
-    const selectedCity = childData;
-    console.log(selectedCity);
+    setSelectedCity(childData);
   }
 
   function renderCity() {
     const stopNextStep = false;
-
     return (
       <View style={styles.stepContainer}>
         {console.log(activeIndex)}
         <CitySelection onChange={childToParentCity} />
-        <Button label="Print" onPress={() => console.log(selectedCity)} />
         <View row spread>
           <View flex left>
             {renderPrevButton()}
@@ -184,12 +188,15 @@ export default function FirstTimeUserScreen(props) {
     );
   }
   // Photo Upload
+  function childToParentPhoto(childData) {
+    setSelectedPhoto(childData);
+  }
   function renderPhoto() {
-    const stopNextStep = true;
+    const stopNextStep = false;
     return (
       <View style={styles.stepContainer}>
         {console.log(activeIndex)}
-        <PhotoUpload />
+        <PhotoUpload onChange={childToParentPhoto} />
         <View row spread>
           <View flex left>
             {renderPrevButton()}
@@ -205,17 +212,25 @@ export default function FirstTimeUserScreen(props) {
   // Executed after pressing "Fertig" in Step 3.
   function finished() {
     console.log("Done - Ship content");
-    // TODO: Send Data to Firebase, Set AsyncStorage key "@first_time_user" to 0
     removeFirstTimeUserStatus();
+
+    // TODO: Send Data to Firebase
+    const firstTimeUserData = {
+      interests: selectedInterests,
+      city: selectedCity,
+      photo: selectedPhoto,
+    };
+    const auth = getAuth();
+    const user = auth.currentUser;
+    const uid = user.uid;
+    updateFirstTimeUserById(uid, firstTimeUserData);
   }
 
   // ----------------------------------------------------------------
-  // Tab Bar Height Constant
-  const tabBarHeight = useBottomTabBarHeight();
 
   // Main return
   return (
-    <View useSafeArea flex style={{ marginBottom: tabBarHeight }}>
+    <View useSafeArea style={{ marginBottom: 90 }} flex>
       <View flex-1>
         <Wizard
           activeIndex={activeIndex}
@@ -257,6 +272,5 @@ const styles = StyleSheet.create({
   stepContainer: {
     flex: 1,
     justifyContent: "space-between",
-    // marginBottom: tabBarHeight,
   },
 });

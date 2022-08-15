@@ -17,7 +17,7 @@ import {
 // Expo Image Picker for Uploading Photos
 import * as ImagePicker from "expo-image-picker";
 
-export default function PhotoUpload() {
+export default function PhotoUpload(props) {
   // Image State
   const [image, setImage] = useState(null);
 
@@ -30,6 +30,8 @@ export default function PhotoUpload() {
     });
 
     console.log(result);
+    props.onChange(result);
+    //! STRUCTURE OF THE "result" OBJECT!:
     // object{
     // "cancelled": bool,
     // "height": number,
@@ -42,6 +44,8 @@ export default function PhotoUpload() {
       setImage(result.uri);
     }
   }
+  // Data Transfer from PhotoUpload to FirstTimeUserScreen
+
   return (
     <View flex center paddingT-80>
       <View center marginH-30>
@@ -71,7 +75,9 @@ export default function PhotoUpload() {
           size={Button.sizes.large}
           backgroundColor={Colors.secondaryColor}
           borderRadius={10}
-          onPress={pickImage}
+          onPress={async () => {
+            await pickImage();
+          }}
         />
       </View>
     </View>

@@ -21,7 +21,6 @@ loadFoundationConfig();
 import { fetchAllEvents, fetchAllCategories } from "../../store/http";
 // Navigation
 import { useIsFocused } from "@react-navigation/native";
-import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
 
 export default function HomeScreen(props) {
   // State for all Events
@@ -56,9 +55,9 @@ export default function HomeScreen(props) {
   }, [isFocused]);
 
   // Tab Bar Height Constant
-  const tabBarHeight = useBottomTabBarHeight();
+
   return (
-    <SafeAreaView style={{ marginBottom: tabBarHeight }}>
+    <SafeAreaView>
       <ScrollView>
         {/* RENDER EVENT CREATION MODAL: */}
         <View>

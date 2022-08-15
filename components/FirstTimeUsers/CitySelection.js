@@ -1,5 +1,5 @@
 import { StyleSheet } from "react-native";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Card,
   Text,
@@ -18,6 +18,11 @@ import { cities } from "../../util/cities.js";
 
 export default function CitySelection(props) {
   const [selectedCity, setSelectedCity] = useState("");
+
+  useEffect(() => {
+    props.onChange(selectedCity);
+  }, [selectedCity]);
+
   return (
     <View flex center paddingT-100>
       <View center marginH-30>
@@ -48,7 +53,6 @@ export default function CitySelection(props) {
           enableModalBlur={false}
           onChange={(item) => {
             setSelectedCity(item);
-            props.onChange(selectedCity);
           }}
           topBarProps={{ title: "Städte", useSafeArea: true }}
           migrateTextField
@@ -76,10 +80,6 @@ export default function CitySelection(props) {
             <Picker.Item key={index} value={option} label={option} />
           ))}
         </Picker>
-        <Button
-          label="Print current Value"
-          onPress={() => console.log(selectedCity)}
-        />
       </View>
     </View>
   );

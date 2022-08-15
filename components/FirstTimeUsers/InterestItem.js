@@ -18,9 +18,7 @@ export default function InterestItem(props) {
   const [categoryLiked, setCategoryLiked] = useState(false);
   // Function that gets executed when pressing a card
   function onPressHandler() {
-    console.log(categoryLiked ? "Disliked" : "Liked");
     setCategoryLiked(!categoryLiked);
-    // console.log(categoryLiked);
     // Send the category name back to the parent and there put it into an array of all liked categories.
     props.onLiked(props.item);
   }

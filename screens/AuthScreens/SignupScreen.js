@@ -105,6 +105,9 @@ export default function SignupScreen({ navigation }) {
                         lastName: values.lastName,
                         email: user.email,
                         emailVerified: user.emailVerified,
+                        city: "",
+                        interests: [],
+                        photo: {},
                       };
                       // Sending User data to Firebase
                       axios
