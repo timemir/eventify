@@ -230,7 +230,7 @@ export default function FirstTimeUserScreen(props) {
 
   // Main return
   return (
-    <View useSafeArea style={{ marginBottom: 90 }} flex>
+    <View useSafeArea style={{ marginBottom: 0 }} flex>
       <View flex-1>
         <Wizard
           activeIndex={activeIndex}

@@ -18,7 +18,11 @@ import ButtonDefault from "../../components/UI/ButtonDefault";
 import BackArrow from "../../components/UI/BackArrow";
 import CircleSmall from "../../components/UI/CircleSmall";
 import { auth } from "../../store/firebase";
-import { createUserWithEmailAndPassword } from "firebase/auth";
+import {
+  createUserWithEmailAndPassword,
+  updateProfile,
+  getAuth,
+} from "firebase/auth";
 import { AuthContext } from "../../store/auth-context";
 // axios HTTP Requests
 import axios from "axios";
@@ -87,8 +91,14 @@ export default function SignupScreen({ navigation }) {
                     .then((userCredential) => {
                       // Logged In
                       const user = userCredential.user;
-                      console.log(user);
-                      user.displayName = `${values.firstName} ${values.lastName}`;
+                      // console.log(user);
+                      // user.displayName = `${values.firstName} ${values.lastName}`;
+                      const authCurrent = getAuth();
+                      updateProfile(authCurrent.currentUser, {
+                        displayName: `${values.firstName} ${values.lastName}`,
+                      })
+                        .then(() => console.log("Profile Name Set"))
+                        .catch((error) => console.log(error));
 
                       // Sending User data to global context to use app-wide.
                       authCtx.createUser(

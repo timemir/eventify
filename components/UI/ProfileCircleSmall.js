@@ -1,16 +1,38 @@
 import { Image, Pressable, StyleSheet, Text, View } from "react-native";
-import React from "react";
-
+import React, { useLayoutEffect, useState } from "react";
+import axios from "axios";
+import { getAuth } from "firebase/auth";
+import { fetchUserById } from "../../store/http";
 //TODO : Connect Image Source with User Profile Picture from Firebase
 export default function ProfileCircleSmall(props) {
+  const [photoPath, setPhotoPath] = useState("");
+  // Get photo data from Firebase
+  const auth = getAuth();
+  const user = auth.currentUser;
+  async function getUserPhoto() {
+    try {
+      const userData = await fetchUserById(user.uid);
+      setPhotoPath(userData.photo.uri);
+    } catch (error) {
+      console.log(error);
+    }
+  }
+  useLayoutEffect(() => {
+    getUserPhoto();
+  }, []);
+
   return (
     <View>
       <Pressable onPress={props.onPress}>
         <View style={styles.imageContainer}>
-          <Image
-            source={require("../../assets/images/profileSmall.jpg")}
-            style={styles.image}
-          />
+          {photoPath !== "" ? (
+            <Image source={{ uri: photoPath }} style={styles.image} />
+          ) : (
+            <Image
+              source={require("../../assets/images/defaultAvatar.png")}
+              style={styles.image}
+            />
+          )}
         </View>
       </Pressable>
     </View>
