@@ -1,4 +1,10 @@
-import { StyleSheet, ScrollView, Pressable } from "react-native";
+import {
+  StyleSheet,
+  ScrollView,
+  Pressable,
+  KeyboardAvoidingView,
+  Platform,
+} from "react-native";
 import {
   Card,
   Text,
@@ -13,8 +19,10 @@ import {
   Constants,
   LoaderScreen,
   Toast,
+  KeyboardTrackingView,
 } from "react-native-ui-lib";
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useEffect } from "react";
+import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import Ionicons from "react-native-vector-icons/Ionicons";
 // Maps
 import MapView, { Marker } from "react-native-maps";
@@ -29,14 +37,6 @@ import { AuthContext } from "../../store/auth-context";
 // Incubators are experimental Components from RNUILib
 const { TextField } = Incubator;
 
-// DUMMY DATA
-const DUMMY_SECTIONS = [
-  "StadtDORTMUND",
-  "Schwimmen",
-  "Joggen",
-  "Party",
-  "Schach",
-];
 // Main Function Component
 export default function EventCreation(props) {
   // Creation of states (Data that gets send to the event object for event creation)
@@ -44,7 +44,12 @@ export default function EventCreation(props) {
   const [category, setCategory] = useState("");
   const [date, setDate] = useState("");
   const [time, setTime] = useState("");
-  const [googleMapsData, setgoogleMapsData] = useState("");
+  const [description, setDescription] = useState("");
+  const [googleMapsData, setgoogleMapsData] = useState({
+    name: undefined,
+    street: undefined,
+    city: undefined,
+  });
   const [mapRegion, setMapRegion] = useState({
     latitude: 51.512408,
     longitude: 7.466741,
@@ -60,16 +65,36 @@ export default function EventCreation(props) {
   const [httpPosting, setHttpPosting] = useState(false);
   // Final Validation State
   const [finalValidationFailed, setFinalValidationFailed] = useState(false);
+  const [checkAllEntries, setCheckAllEntries] = useState(false);
+
+  useEffect(() => {
+    props.navigation.addListener("focus", () => {});
+  }, []);
+
+  useEffect(() => {
+    if (
+      title !== "" &&
+      category !== "" &&
+      time !== "" &&
+      date !== "" &&
+      googleMapsData?.name !== undefined
+    ) {
+      setCheckAllEntries(false);
+    } else {
+      setCheckAllEntries(true);
+    }
+  }, [title, category, time, date, googleMapsData]);
+
   // ----------------------------------------------------------------
   // Checking if user is signed in to get userID
-  const auth = getAuth();
+
   const user = auth.currentUser;
 
   // Navigation params passed from HomeScreen
   const fetchedCategories = props.route.params;
   // Rendering of the component
   return (
-    <ScrollView>
+    <KeyboardAwareScrollView>
       <View flex padding-20>
         {/* Render LoaderScreen when we are Creating a new event*/}
         {httpPosting && (
@@ -230,119 +255,27 @@ export default function EventCreation(props) {
           </View>
         </Card>
         {/* ---------------------------------------------------------------- */}
-        {/* Inputfield - Map */}
-        <Dialog
-          useSafeArea
-          key={1}
-          bottom={true}
-          height={"95%"}
-          // panDirection={Dialog.directions.DOWN}
-          containerStyle={styles.roundedDialog}
-          visible={dialogState}
-          onDismiss={() => setDialogState(false)}
-          // renderPannableHeader={(props) => {
-          //   const { title } = props;
-          //   return (
-          //     <View>
-          //       <View margin-15 center>
-          //         <Text $textDefault>{title}</Text>
-          //       </View>
-          //       <View height={2} bg-grey70 />
-          //     </View>
-          //   );
-          // }}
-          pannableHeaderProps={{
-            title: "Drücke auf die Karte um einen Pin zu erstellen.",
-          }}
-          supportedOrientations={["portrait", "landscape"]}
-          ignoreBackgroundPress={true}
-        >
-          {/* Content inside the Dialog - BIG MAP */}
-          <View flex margin-10>
-            <View flex centerH>
-              {/* Search Bar with Google Integration */}
-              <GooglePlacesAutocomplete
-                placeholder="Suche nach einem Ort"
-                fetchDetails={true}
-                GooglePlacesSearchQuery={{
-                  rankby: "distance",
-                }}
-                onPress={(data, details = null) => {
-                  // 'details' is provided when fetchDetails = true
-                  console.log(data, details);
-                  setgoogleMapsData({ data: data, details: details });
-                  setMapRegion({
-                    latitude: details.geometry.location.lat,
-                    longitude: details.geometry.location.lng,
-                    latitudeDelta: 0.0922,
-                    longitudeDelta: 0.0421,
-                  });
-                }}
-                query={{
-                  //TODO: REMOVE API KEY IN PRODUCTION!
-                  key: "AIzaSyAuZPnw7i5OQrwKWytiyvhV6wCCeEOgxps",
-                  language: "de",
-                  components: "country:DE",
-                  radius: 30000,
-                  location: `${mapRegion.latitude}, ${mapRegion.longitude}`,
-                }}
-                onFail={(error) => {
-                  console.log(error);
-                }}
-                styles={{
-                  container: {
-                    flex: 0,
-                    position: "absolute",
-                    width: "100%",
-                    zIndex: 1,
-                  },
-                  listView: { backgroundColor: "white" },
-                }}
-              />
-              <MapView
-                style={{ alignSelf: "stretch", height: "100%" }}
-                region={mapRegion}
-                provider="google"
-                onRegionChangeComplete={(region) => {
-                  setMapRegion((prevState) => {
-                    return { prevState, ...region };
-                  });
-                }}
-                onPress={(event) => {
-                  console.log(`${mapRegion.latitude}, ${mapRegion.longitude}`);
-                  setMapMarker(event.nativeEvent.coordinate);
-                }}
-              >
-                <Marker
-                  coordinate={{
-                    latitude: mapMarker.latitude,
-                    longitude: mapMarker.longitude,
-                  }}
-                  draggable={true}
-                  onDragEnd={(event) => {
-                    console.log(event.nativeEvent.coordinate);
-                  }}
-                ></Marker>
-              </MapView>
-            </View>
-            <Button
-              text60
-              label="Fertig"
-              backgroundColor={Colors.secondaryColor}
-              borderRadius={10}
-              marginT-5
-              onPress={() => {
-                setDialogState(false);
-                // TODO: Save Marker Coords
-              }}
-            />
-          </View>
-        </Dialog>
+
         {/* Inputfield - Small Map */}
         <Pressable
           onPress={() => {
-            // props.navigation.navigate("eventCreationMap"); // Alternative way of making the big map
-            setDialogState(true);
+            props.navigation.navigate("eventCreationMap", {
+              mapRegion: mapRegion,
+              onReturn: (mapsData, mapsCoords) => {
+                setgoogleMapsData(mapsData);
+                setMapRegion({
+                  latitude: mapsCoords.latitude,
+                  longitude: mapsCoords.longitude,
+                  latitudeDelta: mapsCoords.latitudeDelta,
+                  longitudeDelta: mapsCoords.latitudeDelta,
+                });
+                setMapMarker({
+                  latitude: mapsCoords.latitude,
+                  longitude: mapsCoords.longitude,
+                });
+              },
+            }); // Alternative way of making the big map
+            // setDialogState(true);
           }}
         >
           <Card
@@ -362,6 +295,10 @@ export default function EventCreation(props) {
 
             <View flex centerH>
               <MapView
+                pitchEnabled={false}
+                rotateEnabled={false}
+                zoomEnabled={false}
+                scrollEnabled={false}
                 style={{ alignSelf: "stretch", height: "100%" }}
                 region={mapRegion}
                 provider="google"
@@ -369,8 +306,65 @@ export default function EventCreation(props) {
             </View>
           </Card>
         </Pressable>
+        {/* Map Data after Selection */}
+        {googleMapsData.name !== undefined && (
+          <Card
+            row
+            padding-10
+            height={160}
+            centerV
+            marginB-20
+            style={{ backgroundColor: Colors.greyBackgroundColor }}
+          >
+            <Ionicons
+              name="pin-outline"
+              size={24}
+              color="grey"
+              style={{ marginRight: 20 }}
+            />
+
+            <View flex centerH>
+              <Text>{`${googleMapsData?.name}`}</Text>
+              <Text>{`${googleMapsData?.street}`}</Text>
+              <Text>{`${googleMapsData?.city}`}</Text>
+            </View>
+          </Card>
+        )}
+        {/* Inputfield - Description  */}
+
+        <Card
+          row
+          padding-10
+          height={160}
+          centerV
+          marginB-20
+          style={{ backgroundColor: Colors.greyBackgroundColor }}
+        >
+          <Ionicons
+            name="newspaper-outline"
+            size={24}
+            color="grey"
+            style={{ marginRight: 20 }}
+          />
+
+          <View flex centerH>
+            <TextField
+              placeholder={"Schreibe eine kurze Beschreibung"}
+              onChangeText={(text) => setDescription(text)}
+              showCharCounter
+              multiline
+              maxLength={150}
+              style={{
+                height: 100,
+                minWidth: "100%",
+              }}
+            />
+          </View>
+        </Card>
+
         {/* Submit Button */}
         <Button
+          disabled={checkAllEntries}
           label={"Event erstellen"}
           size={Button.sizes.large}
           backgroundColor={Colors.secondaryColor}
@@ -389,10 +383,8 @@ export default function EventCreation(props) {
                 date: date.toISOString().slice(0, 10),
                 time: time.toISOString().slice(11, 19),
                 googleMapsData: googleMapsData,
-                coords: {
-                  longitude: mapRegion.longitude,
-                  latitude: mapRegion.latitude,
-                },
+                description: description,
+                coords: mapMarker,
                 mapMarkerCoords: mapMarker,
                 participants: [
                   { userID: user.uid, userName: user.displayName },
@@ -429,7 +421,7 @@ export default function EventCreation(props) {
           onDismiss={() => setFinalValidationFailed(false)}
         ></Toast>
       </View>
-    </ScrollView>
+    </KeyboardAwareScrollView>
   );
 }
 

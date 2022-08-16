@@ -14,6 +14,8 @@ export const AuthContext = createContext({
   createUser: () => {},
   logOut: () => {},
   signInUser: () => {},
+  adminStatus: false,
+  setAdminStatus: () => {},
 });
 
 export default function AuthContextProvider({ children }) {
@@ -27,6 +29,7 @@ export default function AuthContextProvider({ children }) {
     firebaseData: {},
   });
   const [isSignedIn, setIsSignedIn] = useState(true);
+  const [adminStatus, setAdminStatus] = useState(false);
   function signInUser(bool) {
     setIsSignedIn(bool);
   }
@@ -43,6 +46,10 @@ export default function AuthContextProvider({ children }) {
   }
   function logOut() {
     setIsSignedIn(false);
+    setAdminStatus(false);
+  }
+  function setAdmin() {
+    setAdminStatus(true);
   }
   // All global Variables to pass to the state
   const value = {
@@ -51,6 +58,8 @@ export default function AuthContextProvider({ children }) {
     signInUser: signInUser,
     createUser: createUser,
     logOut: logOut,
+    adminStatus: adminStatus,
+    setAdmin: setAdmin,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

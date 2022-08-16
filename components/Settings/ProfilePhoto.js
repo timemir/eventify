@@ -1,18 +1,19 @@
 import { Image, Pressable, StyleSheet, Text, View } from "react-native";
 import React, { useLayoutEffect, useState } from "react";
 import axios from "axios";
-import { auth } from "../../store/firebase";
 import { fetchUserById } from "../../store/http";
-//TODO : Connect Image Source with User Profile Picture from Firebase
+import { auth } from "../../store/firebase";
+
+//
 export default function ProfileCircleSmall(props) {
-  const [photoPath, setPhotoPath] = useState("");
-  // Get photo data from Firebase;
+  const [profilePhotoPath, setProfilePhotoPath] = useState("");
+  // Get photo data from Firebase
   const user = auth.currentUser;
   async function getUserPhoto() {
     try {
       const userData = await fetchUserById(user.uid);
       if (userData.photo.uri) {
-        setPhotoPath(userData.photo.uri);
+        setProfilePhotoPath(userData.photo.uri);
       } else {
         console.log("No Photo Uploaded - Using Default Avatar");
       }
@@ -28,8 +29,8 @@ export default function ProfileCircleSmall(props) {
     <View>
       <Pressable onPress={props.onPress}>
         <View style={styles.imageContainer}>
-          {photoPath !== "" ? (
-            <Image source={{ uri: photoPath }} style={styles.image} />
+          {profilePhotoPath !== "" ? (
+            <Image source={{ uri: profilePhotoPath }} style={styles.image} />
           ) : (
             <Image
               source={require("../../assets/images/defaultAvatar.png")}
@@ -41,12 +42,12 @@ export default function ProfileCircleSmall(props) {
     </View>
   );
 }
-const IMAGE_SIZE = 40;
+const IMAGE_SIZE = 150;
 const styles = StyleSheet.create({
   imageContainer: {
     width: IMAGE_SIZE,
     height: IMAGE_SIZE,
-    borderRadius: IMAGE_SIZE / 2,
+    // borderRadius: IMAGE_SIZE / 2,
     overflow: "hidden",
     margin: 10,
     marginBottom: 15,

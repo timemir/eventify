@@ -22,7 +22,7 @@ import ProfileCircleSmall from "./components/UI/ProfileCircleSmall";
 import LogOut from "./components/UI/LogOut";
 // Global Context
 import AuthContextProvider, { AuthContext } from "./store/auth-context";
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useLayoutEffect, useState } from "react";
 
 // Firebase auth
 import { auth } from "./store/firebase";
@@ -33,17 +33,19 @@ import FirstTimeUserScreen from "./screens/AuthScreens/FirstTimeUserScreen";
 
 // Async Storage for tracking if we have a first time user
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import UserSettings from "./screens/SettingsScreens/UserSettings";
+import AdminDashboard from "./screens/SettingsScreens/AdminDashboard";
 // ----------------------------------------------------------------
 
 // Create React Navigation Navigators
 const Stack = createNativeStackNavigator();
 const BottomTab = createBottomTabNavigator();
 const Drawer = createDrawerNavigator();
-// TEMP: Variable to simulate Auth Process to switch between Navigators in Component "Navigator"
-const SWITCH_SCREENS = false;
-// Drawer Navigator for HomeScreen
 
+// Drawer Navigator for HomeScreen
 function DrawerNavigator() {
+  const user = auth.currentUser;
+
   return (
     <Drawer.Navigator
       screenOptions={{
@@ -70,12 +72,17 @@ function DrawerNavigator() {
           // drawerItemStyle: { height: 0 }, // Hide a Drawer Item from showing inside Drawer
         })}
       />
-      <Drawer.Screen name="Profile" component={ProfileScreen} />
+      <Drawer.Screen name="Profil" component={ProfileScreen} />
+      <Drawer.Screen name="Einstellungen" component={UserSettings} />
+      {user.email === "admin@admin.com" && (
+        <Drawer.Screen name="Admin Dashboard" component={AdminDashboard} />
+      )}
       <Drawer.Screen name="Log Out" component={LogOut} />
     </Drawer.Navigator>
   );
 }
 // Bottom Navigator Tabs
+
 function BottomTabNavigator() {
   return (
     <BottomTab.Navigator
@@ -177,12 +184,32 @@ const MyTheme = {
     background: "white",
   },
 };
+
 function Navigation() {
   const authCtx = useContext(AuthContext);
+
+  // Authentication
+  const [user, setUser] = useState(null);
+
+  useLayoutEffect(() => {
+    console.log("wtf is happening");
+    onAuthStateChanged(auth, (currentUser) => {
+      if (currentUser) {
+        setUser(currentUser);
+        if (currentUser.email === "admin@admin.com") {
+          authCtx.setAdmin();
+        }
+      } else {
+        // User is signed out
+        setUser(null);
+      }
+    });
+  }, [auth]);
+
   return (
     <NavigationContainer theme={MyTheme}>
-      {!authCtx.isSignedIn && <AuthenticationProcess />}
-      {authCtx.isSignedIn && <AuthenticatedStack />}
+      {!user && <AuthenticationProcess />}
+      {user && <AuthenticatedStack />}
     </NavigationContainer>
   );
 }

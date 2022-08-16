@@ -67,11 +67,14 @@ export default function MapScreen() {
               eventData: {
                 category: response.data[key].category,
                 participants: response.data[key].participants,
+                googleMapsData: response.data[key].googleMapsData,
+                description: response.data[key].description,
               },
             };
             eventMarkers.push(markerObject);
           }
           setEventMarkersList(eventMarkers);
+
           // ----------------------------------------------------------------
           // EVENT DATA
 
@@ -113,9 +116,10 @@ export default function MapScreen() {
               tooltip
               onPress={() => {
                 // TODO: Pass on Event ID from Marker to the setShow
-                console.log("pressed Callout");
+
                 setShowEventModal({ show: true, markerData: marker });
-                console.log(showEventModal.markerData);
+                // console.log(showEventModal.markerData);
+                // console.log(showEventModal.markerData.eventData);
               }}
               style={styles.customView}
             >
@@ -145,7 +149,7 @@ export default function MapScreen() {
           useSafeArea
           key={1}
           bottom={true}
-          height={"85%"}
+          height={"95%"}
           containerStyle={styles.roundedDialog}
           visible={showEventModal.show}
           onDismiss={() =>
@@ -190,22 +194,38 @@ export default function MapScreen() {
                     color="grey"
                     style={{ marginRight: 20 }}
                   />
-                  <Text text60BO>{`${showEventModal.markerData.date}`}</Text>
+                  <Text
+                    grey30
+                    text60BO
+                  >{`${showEventModal.markerData.date}`}</Text>
                 </Card>
                 {/* Adresse */}
-                <Card row margin-15 enableShadow={false}>
+                <Card row margin-15 centerV enableShadow={false}>
                   <Ionicons
                     name="navigate-circle"
                     size={24}
                     color="grey"
                     style={{ marginRight: 20 }}
                   />
-                  <Text
-                    text60BO
-                  >{`${showEventModal.markerData.coords.latitude}, ${showEventModal.markerData.coords.longitude}`}</Text>
+
+                  <View style={{ width: "70%" }}>
+                    <Text
+                      text60BO
+                      grey30
+                      textAlign
+                    >{`${showEventModal.markerData.eventData.googleMapsData.name} `}</Text>
+                    <Text
+                      text60BO
+                      grey30
+                    >{`${showEventModal.markerData.eventData.googleMapsData.street}`}</Text>
+                    <Text
+                      text60BO
+                      grey30
+                    >{`${showEventModal.markerData.eventData.googleMapsData.city}`}</Text>
+                  </View>
                 </Card>
                 {/* Teilnehmer */}
-                <Card row margin-15 enableShadow={false}>
+                <Card row centerV margin-15 enableShadow={false}>
                   <Ionicons
                     name="person-circle"
                     size={24}
@@ -214,21 +234,48 @@ export default function MapScreen() {
                   />
                   <View>
                     <View row left>
-                      <Text text60BO marginR-5>{`Teilnehmer`}</Text>
+                      <Text grey30 text60BO marginR-5>{`Teilnehmer`}</Text>
                     </View>
                     <Avatar></Avatar>
-                    <Text>{`Es nehmen ${showEventModal.markerData.eventData.participants.length} Leute an dem Event teil.`}</Text>
+                    <Text grey30>
+                      {showEventModal.markerData.eventData.participants
+                        .length === 1
+                        ? `Es nimmt eine Person an dem Event teil.`
+                        : `Es nehmen ${showEventModal.markerData.eventData.participants.length} Leute an dem Event teil.`}
+                    </Text>
                   </View>
                 </Card>
                 {/* Beschreibung */}
                 <Card row margin-15 enableShadow={false}>
+                  <Ionicons
+                    name="newspaper-outline"
+                    size={24}
+                    color="grey"
+                    style={{ marginRight: 20 }}
+                  />
                   <View>
-                    <Text text60BO>{`Beschreibung`}</Text>
-                    <Text> blaa</Text>
+                    <Text grey30 marginB-10 text60BO>{`Beschreibung`}</Text>
+                    <Text grey30>
+                      {" "}
+                      {showEventModal.markerData.eventData.description
+                        ? `${showEventModal.markerData.eventData.description}`
+                        : "Keine Beschreibung"}{" "}
+                    </Text>
                   </View>
                 </Card>
               </View>
             </ScrollView>
+            <View margin-5>
+              <Button
+                label={"Teilnehmen"}
+                style={{ backgroundColor: Colors.secondaryColor }}
+                size={Button.sizes.large}
+                borderRadius={10}
+                onPress={() => {
+                  console.log("Teilnehmen");
+                }}
+              />
+            </View>
           </View>
         </Dialog>
       )}
