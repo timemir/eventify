@@ -14,11 +14,11 @@ import {
   View,
 } from "react-native-ui-lib";
 import { auth } from "../../../store/firebase";
-
+import { categoryImage } from "../../../util/categoriesImages";
 // Component
 export default function MainEventScreen(props) {
   const eventObject = props.route.params;
-
+  console.log(eventObject.category.toLowerCase());
   // Date Management
   const date = new Date(eventObject.date);
   const longDate = date.toLocaleDateString("de-DE").split("-");
@@ -72,15 +72,15 @@ export default function MainEventScreen(props) {
       <ScrollView style={{ flex: 1 }}>
         <View
           flex
-          bg-blue50
           centerH
           style={{
             overflow: "hidden",
+            maxHeight: 250,
             borderBottomLeftRadius: 25,
             borderBottomRightRadius: 25,
           }}
         >
-          <View absL marginT-5 style={{ opacity: 0.7 }}>
+          <View absL marginT-5 style={{ opacity: 0.7, zIndex: 100 }}>
             <Button
               label="<"
               size={Button.sizes.small}
@@ -91,7 +91,10 @@ export default function MainEventScreen(props) {
               onPress={() => props.navigation.goBack()}
             />
           </View>
-          <Image source={require("../../../assets/images/small.png")} cover />
+          <Image
+            source={categoryImage[eventObject.category.toLowerCase()]}
+            cover
+          />
         </View>
         <View flex marginH-15>
           {/* TITEL */}
