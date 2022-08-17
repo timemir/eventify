@@ -1,18 +1,18 @@
-import { StyleSheet } from "react-native";
 import React, { useState } from "react";
+import { StyleSheet } from "react-native";
 import {
-  Card,
-  Text,
-  Spacings,
-  View,
+  BorderRadiuses,
   Button,
-  Icon,
+  Card,
   Colors,
   GridList,
-  BorderRadiuses,
+  Icon,
+  Spacings,
+  Text,
+  View,
 } from "react-native-ui-lib";
 import Ionicons from "react-native-vector-icons/Ionicons";
-
+import { categoryImage } from "../../util/categoriesImages";
 export default function InterestItem(props) {
   // Each Item gets a State that tracks if the Category got liked
   const [categoryLiked, setCategoryLiked] = useState(false);
@@ -24,10 +24,13 @@ export default function InterestItem(props) {
   }
 
   //
-  const itemImage = require("../../assets/images/small.png");
+
   return (
     <Card flex onPress={onPressHandler}>
-      <Card.Section imageSource={itemImage} imageStyle={styles.itemImage} />
+      <Card.Section
+        imageSource={categoryImage[props.item.toLowerCase()]}
+        imageStyle={styles.itemImage}
+      />
       <View center padding-s2>
         <Text $textDefault>
           <Text color={Colors.secondaryColor}>#</Text>

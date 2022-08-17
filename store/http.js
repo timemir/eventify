@@ -55,6 +55,7 @@ export async function fetchAllEvents() {
       coords: response.data[key].mapMarkerCoords,
       location: response.data[key].googleMapsData,
       participants: response.data[key].participants,
+      description: response.data[key].description,
     };
     eventsList.push(eventObject);
   }

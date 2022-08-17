@@ -1,16 +1,18 @@
-import { StyleSheet } from "react-native";
+import { useNavigation } from "@react-navigation/native";
 import React, { useState } from "react";
+import { StyleSheet } from "react-native";
 import {
   Card,
-  Text,
   Carousel,
-  Spacings,
-  View,
   ExpandableSection,
+  Spacings,
+  Text,
+  View,
 } from "react-native-ui-lib";
-// --------------------------------------------------------------
 import loadFoundationConfig from "../../../RNUILib/FoundationConfig";
+import { categoryImage } from "../../../util/categoriesImages";
 loadFoundationConfig();
+// --------------------------------------------------------------
 // DUMMY DATA
 // TODO: Replace Dummy Data List with Event Data from corresponding category.
 const cardImage = require("../../../assets/images/small.png");
@@ -63,7 +65,7 @@ const DUMMY_ELEMENTS = [
 
 export default function EventSection(props) {
   const [expanded, setExpanded] = useState(true);
-
+  const navigation = useNavigation();
   // Array with All event objects, that have the same category
   const eventsDataForCategory = props.categoryEventData();
   const cardImage = require("../../../assets/images/small.png");
@@ -72,8 +74,10 @@ export default function EventSection(props) {
     return (
       <Card
         key={eventObject.eventId}
-        style={{ marginBottom: 10 }}
-        onPress={() => console.log("Open Event Modal")}
+        style={{ marginBottom: 10, maxHeight: 250 }}
+        onPress={() => {
+          navigation.navigate("mainEventScreen", eventObject);
+        }}
       >
         <Card.Section
           content={[
@@ -86,7 +90,10 @@ export default function EventSection(props) {
           ]}
           style={{ padding: 20 }}
         />
-        <Card.Section imageSource={cardImage} imageStyle={{ height: 120 }} />
+        <Card.Section
+          imageSource={categoryImage[eventObject.category.toLowerCase()]}
+          imageStyle={{ height: 120 }}
+        />
       </Card>
     );
   });

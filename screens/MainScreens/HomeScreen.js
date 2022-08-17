@@ -1,16 +1,16 @@
-import { SafeAreaView, StyleSheet, ScrollView } from "react-native";
-import Ionicons from "react-native-vector-icons/Ionicons";
 import React, { useEffect, useState } from "react";
+import { SafeAreaView, ScrollView, StyleSheet } from "react-native";
+import Ionicons from "react-native-vector-icons/Ionicons";
 // RNUILib
 import {
   Card,
-  Text,
   Carousel,
-  Spacings,
-  View,
+  Colors,
   ExpandableSection,
   Icon,
-  Colors,
+  Spacings,
+  Text,
+  View,
 } from "react-native-ui-lib";
 import EventSection from "../../components/UI/HomeScreen/EventSection";
 import loadFoundationConfig from "../../RNUILib/FoundationConfig";
@@ -18,7 +18,7 @@ import { GlobalStyles } from "../../util/GlobalColors";
 loadFoundationConfig();
 
 // http helper functions
-import { fetchAllEvents, fetchAllCategories } from "../../store/http";
+import { fetchAllCategories, fetchAllEvents } from "../../store/http";
 // Navigation
 import { useIsFocused } from "@react-navigation/native";
 
@@ -58,7 +58,56 @@ export default function HomeScreen(props) {
 
   return (
     <SafeAreaView>
-      <ScrollView>
+      {/* BUBBLES */}
+      <View
+        absT
+        height={300}
+        width={"100%"}
+        style={{
+          overflow: "hidden",
+          borderBottomLeftRadius: 50,
+          borderBottomRightRadius: 50,
+          // backgroundColor: "#eee2e2",
+        }}
+      >
+        <View
+          abs
+          style={{
+            left: -5,
+            top: -110,
+            zIndex: 1,
+            backgroundColor: Colors.bubbleColor,
+          }}
+          borderRadius={180}
+          width={360}
+          height={360}
+        />
+        <View
+          abs
+          style={{
+            right: -90,
+            top: -90,
+            zIndex: 2,
+            backgroundColor: Colors.bubbleColorTertiary,
+          }}
+          borderRadius={160}
+          width={320}
+          height={320}
+        />
+        <View
+          abs
+          style={{
+            left: -50,
+            top: 65,
+            zIndex: 2,
+            backgroundColor: Colors.bubbleColorSecondary,
+          }}
+          borderRadius={65}
+          width={130}
+          height={130}
+        />
+      </View>
+      <ScrollView style={{ marginBottom: 45 }}>
         {/* RENDER EVENT CREATION MODAL: */}
         <View>
           <Card
@@ -66,7 +115,11 @@ export default function HomeScreen(props) {
             center
             flex
             height={160}
-            style={{ marginBottom: 15, marginTop: 15 }}
+            style={{
+              marginBottom: 15,
+              marginTop: 15,
+              backgroundColor: Colors.secondaryColor,
+            }}
             onPress={() =>
               props.navigation.navigate("eventCreation", fetchedCategories)
             }
@@ -74,36 +127,22 @@ export default function HomeScreen(props) {
             activeOpacity={1}
           >
             <Card.Section
-              imageSource={require("../../assets/images/small.png")}
+              imageSource={require("../../assets/images/guyOnChair.png")}
               imageStyle={{ width: 115, height: "100%" }}
             />
-            <Card.Section
-              content={[
-                {
-                  text: "Neues Event erstellen",
-                  text70: true,
-                  primaryColor: true,
-                  $textDefault: true,
-                },
-                {
-                  text: "Organisiere deine eigenen Events",
-                  text80: true,
-                  $textDefault: true,
-                  $textDisabled: true,
-                },
-              ]}
-              contentStyle={{
-                justifyContent: "center",
-              }}
-              style={{
-                padding: 10,
-                flex: 1,
-              }}
-            />
+
+            <View flex center>
+              <Text text60BO white>
+                Neues Event erstellen
+              </Text>
+              <Text center style={{ marginHorizontal: 20 }} grey60 text90>
+                Organisiere deine eigenen Events
+              </Text>
+            </View>
             <Ionicons
               name={"arrow-forward-outline"}
               size={34}
-              color={"black"}
+              color={"white"}
             />
           </Card>
         </View>

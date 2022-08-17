@@ -1,40 +1,41 @@
-import "react-native-gesture-handler";
 import { StatusBar } from "expo-status-bar";
 import { Text, View } from "react-native";
+import "react-native-gesture-handler";
 //Navigation
+import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import { createDrawerNavigator } from "@react-navigation/drawer";
 import {
-  NavigationContainer,
   DefaultTheme,
+  NavigationContainer,
   useNavigation,
 } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import Ionicons from "react-native-vector-icons/Ionicons";
+import LogOut from "./components/UI/LogOut";
+import ProfileCircleSmall from "./components/UI/ProfileCircleSmall";
 import LoginScreen from "./screens/AuthScreens/LoginScreen";
 import SignupScreen from "./screens/AuthScreens/SignupScreen";
 import WelcomeScreen from "./screens/AuthScreens/WelcomeScreen";
-import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import HomeScreen from "./screens/MainScreens/HomeScreen";
-import SearchScreen from "./screens/MainScreens/SearchScreen";
 import MapScreen from "./screens/MainScreens/MapScreen";
 import ProfileScreen from "./screens/MainScreens/ProfileScreen";
-import Ionicons from "react-native-vector-icons/Ionicons";
-import { createDrawerNavigator } from "@react-navigation/drawer";
-import ProfileCircleSmall from "./components/UI/ProfileCircleSmall";
-import LogOut from "./components/UI/LogOut";
+import SearchScreen from "./screens/MainScreens/SearchScreen";
 // Global Context
-import AuthContextProvider, { AuthContext } from "./store/auth-context";
 import { useContext, useEffect, useLayoutEffect, useState } from "react";
+import AuthContextProvider, { AuthContext } from "./store/auth-context";
 
 // Firebase auth
-import { auth } from "./store/firebase";
 import { getAuth, onAuthStateChanged, signOut } from "firebase/auth";
-import EventCreation from "./screens/MainScreens/EventCreation";
 import MapModal from "./components/EventCreation/MapModal";
 import FirstTimeUserScreen from "./screens/AuthScreens/FirstTimeUserScreen";
+import EventCreation from "./screens/MainScreens/EventCreation";
+import { auth } from "./store/firebase";
 
 // Async Storage for tracking if we have a first time user
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import UserSettings from "./screens/SettingsScreens/UserSettings";
+import MainEventScreen from "./components/UI/HomeScreen/MainEventScreen";
 import AdminDashboard from "./screens/SettingsScreens/AdminDashboard";
+import UserSettings from "./screens/SettingsScreens/UserSettings";
 // ----------------------------------------------------------------
 
 // Create React Navigation Navigators
@@ -165,6 +166,7 @@ function AuthenticatedStack() {
     <Stack.Navigator screenOptions={{ headerShown: false }}>
       <Stack.Screen name="bottomTabs" component={BottomTabNavigator} />
       <Stack.Screen name="firstTimeUser" component={FirstTimeUserScreen} />
+      <Stack.Screen name="mainEventScreen" component={MainEventScreen} />
       <Stack.Group screenOptions={{ presentation: "modal" }}>
         <Stack.Screen name="eventCreation" component={EventCreation} />
         <Stack.Screen name="eventCreationMap" component={MapModal} />

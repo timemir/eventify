@@ -1,9 +1,12 @@
-import { Colors, Typography, Spacings } from "react-native-ui-lib";
+import { Colors, Spacings, Typography } from "react-native-ui-lib";
 
 export default function loadFoundationConfig() {
   Colors.loadColors({
     primaryColor: "#ffffff",
     secondaryColor: "#FAA353",
+    bubbleColor: "#f3b276b9",
+    bubbleColorSecondary: "#fdc89685",
+    bubbleColorTertiary: "#ffb774ff",
     greyBackgroundColor: "#cbcbcb23",
     textColor: "##221D23",
     errorColor: "#E63B2E",
