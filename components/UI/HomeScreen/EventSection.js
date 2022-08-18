@@ -4,7 +4,9 @@ import { StyleSheet } from "react-native";
 import {
   Card,
   Carousel,
+  Colors,
   ExpandableSection,
+  Shadows,
   Spacings,
   Text,
   View,
@@ -74,7 +76,18 @@ export default function EventSection(props) {
     return (
       <Card
         key={eventObject.eventId}
-        style={{ marginBottom: 10, maxHeight: 250 }}
+        style={[
+          { marginBottom: 10, maxHeight: 250 },
+          props.highlight && {
+            borderWidth: 4,
+            borderColor: Colors.$outlineWarning,
+            shadowColor: Colors.grey40,
+            shadowOpacity: 0.18,
+            shadowRadius: 5,
+            shadowOffset: { height: -1, width: 0 },
+            elevation: 2,
+          },
+        ]}
         onPress={() => {
           navigation.navigate("mainEventScreen", eventObject);
         }}

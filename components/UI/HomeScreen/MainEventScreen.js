@@ -170,8 +170,9 @@ export default function MainEventScreen(props) {
                 showLocation({
                   latitude: eventObject.coords.latitude,
                   longitude: eventObject.coords.longitude,
+                  title: eventObject.location.name,
                   dialogTitle: "Navigation starten",
-                  dialogMessage: "",
+                  dialogMessage: " ",
                   alwaysIncludeGoogle: true,
                 });
               }}

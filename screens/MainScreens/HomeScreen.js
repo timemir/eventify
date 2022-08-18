@@ -146,25 +146,56 @@ export default function HomeScreen(props) {
             />
           </Card>
         </View>
+        {/* RENDER STADTDORTMUND SECTION: */}
+        <View marginB-40>
+          {fetchedCategories.map((categoryName, index) => {
+            if (categoryName.toLowerCase() === "stadtdortmund") {
+              return (
+                <EventSection
+                  key={index}
+                  sectionName={categoryName}
+                  highlight={true}
+                  categoryEventData={() => {
+                    const eventsListByCategory = [];
+
+                    fetchedEvents.forEach((item) => {
+                      if (item.category === categoryName) {
+                        eventsListByCategory.push(item);
+                      }
+                    });
+
+                    return eventsListByCategory;
+                  }}
+                ></EventSection>
+              );
+            } else {
+              return;
+            }
+          })}
+        </View>
         {/* RENDER CATEGORY SECTIONS: */}
         {fetchedCategories.map((categoryName, index) => {
-          return (
-            <EventSection
-              key={index}
-              sectionName={categoryName}
-              categoryEventData={() => {
-                const eventsListByCategory = [];
+          if (categoryName.toLowerCase() === "stadtdortmund") {
+            return;
+          } else {
+            return (
+              <EventSection
+                key={index}
+                sectionName={categoryName}
+                categoryEventData={() => {
+                  const eventsListByCategory = [];
 
-                fetchedEvents.forEach((item) => {
-                  if (item.category === categoryName) {
-                    eventsListByCategory.push(item);
-                  }
-                });
+                  fetchedEvents.forEach((item) => {
+                    if (item.category === categoryName) {
+                      eventsListByCategory.push(item);
+                    }
+                  });
 
-                return eventsListByCategory;
-              }}
-            ></EventSection>
-          );
+                  return eventsListByCategory;
+                }}
+              ></EventSection>
+            );
+          }
         })}
       </ScrollView>
     </SafeAreaView>

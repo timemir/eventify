@@ -1,35 +1,35 @@
+import React, { useContext, useEffect, useState } from "react";
 import {
-  StyleSheet,
-  ScrollView,
-  Pressable,
   KeyboardAvoidingView,
   Platform,
+  Pressable,
+  ScrollView,
+  StyleSheet,
 } from "react-native";
-import {
-  Card,
-  Text,
-  Spacings,
-  View,
-  Colors,
-  Picker,
-  Incubator,
-  DateTimePicker,
-  Button,
-  Dialog,
-  Constants,
-  LoaderScreen,
-  Toast,
-  KeyboardTrackingView,
-} from "react-native-ui-lib";
-import React, { useState, useContext, useEffect } from "react";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
+import {
+  Button,
+  Card,
+  Colors,
+  Constants,
+  DateTimePicker,
+  Dialog,
+  Incubator,
+  KeyboardTrackingView,
+  LoaderScreen,
+  Picker,
+  Spacings,
+  Text,
+  Toast,
+  View,
+} from "react-native-ui-lib";
 import Ionicons from "react-native-vector-icons/Ionicons";
 // Maps
-import MapView, { Marker } from "react-native-maps";
 import { GooglePlacesAutocomplete } from "react-native-google-places-autocomplete";
+import MapView, { Marker } from "react-native-maps";
 // Firebase Auth
-import { auth } from "../../store/firebase";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
+import { auth } from "../../store/firebase";
 // Axios - HTTP Request
 import axios from "axios";
 // Global Auth Context
@@ -67,10 +67,15 @@ export default function EventCreation(props) {
   const [finalValidationFailed, setFinalValidationFailed] = useState(false);
   const [checkAllEntries, setCheckAllEntries] = useState(false);
 
+  // Getting the Context to check if the user is an admin
+  const authCtx = useContext(AuthContext);
+
+  // Listener to be able to send Map Data from Big Map back to Event Creation Screen
   useEffect(() => {
     props.navigation.addListener("focus", () => {});
   }, []);
 
+  // Final Validation for the Button
   useEffect(() => {
     if (
       title !== "" &&
@@ -92,6 +97,22 @@ export default function EventCreation(props) {
 
   // Navigation params passed from HomeScreen
   const fetchedCategories = props.route.params;
+  // Filtering fetchedCategories: Do not include "stadtDORTMUND", if you are not an admin
+  const filteredCategories = fetchedCategories.reduce(function (
+    result,
+    category
+  ) {
+    if (authCtx.adminStatus) {
+      result.push(category);
+    } else {
+      if (category.toLowerCase() !== "stadtdortmund") {
+        result.push(category);
+      }
+    }
+    return result;
+  },
+  []);
+
   // Rendering of the component
   return (
     <KeyboardAwareScrollView>
@@ -187,9 +208,9 @@ export default function EventCreation(props) {
               placeholderTextColor: Colors.grey20,
             }}
           >
-            {fetchedCategories.map((option, index) => (
-              <Picker.Item key={index} value={option} label={option} />
-            ))}
+            {filteredCategories.map((option, index) => {
+              return <Picker.Item key={index} value={option} label={option} />;
+            })}
           </Picker>
         </Card>
         {/* ---------------------------------------------------------------- */}
