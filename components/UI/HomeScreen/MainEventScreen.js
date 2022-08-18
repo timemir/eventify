@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Pressable, SafeAreaView, ScrollView, StyleSheet } from "react-native";
 import { showLocation } from "react-native-map-link";
 import MapView, { Marker } from "react-native-maps";
@@ -15,6 +15,7 @@ import {
   View,
 } from "react-native-ui-lib";
 import { auth } from "../../../store/firebase";
+import { updateParticipants } from "../../../store/http";
 import { categoryImage } from "../../../util/categoriesImages";
 // Component
 export default function MainEventScreen(props) {
@@ -44,11 +45,14 @@ export default function MainEventScreen(props) {
   // Auth Handling
   const user = auth.currentUser;
   // Check if user is already participant of the event
+  const [userIsParticipant, setUserIsParticipant] = useState(false);
   function checkParticipants() {
     let userIsParticipant = false;
+
     eventObject.participants.every((participant) => {
       if (participant.userID === user.uid) {
         userIsParticipant = true;
+        setUserIsParticipant(true);
         return false;
       } else {
         return true;
@@ -56,6 +60,9 @@ export default function MainEventScreen(props) {
     });
     return userIsParticipant;
   }
+  useEffect(() => {
+    checkParticipants();
+  }, [userIsParticipant]);
 
   const [mapRegion, setMapRegion] = useState({
     latitude: eventObject.coords.latitude,
@@ -246,7 +253,7 @@ export default function MainEventScreen(props) {
       </ScrollView>
       <View row>
         <View row flex marginT-15 marginL-20>
-          {eventObject.participants.length === 1 ? (
+          {eventObject.participants.length >= 1 ? (
             <Avatar
               containerStyle={{ position: "absolute", left: 5, zIndex: 1 }}
               size={55}
@@ -256,7 +263,7 @@ export default function MainEventScreen(props) {
               label={"IT"}
             />
           ) : null}
-          {eventObject.participants.length === 2 ? (
+          {eventObject.participants.length >= 2 ? (
             <Avatar
               containerStyle={{ position: "absolute", left: 20, zIndex: 2 }}
               size={55}
@@ -266,7 +273,7 @@ export default function MainEventScreen(props) {
               label={"IT"}
             />
           ) : null}
-          {eventObject.participants.length === 3 ? (
+          {eventObject.participants.length >= 3 ? (
             <Avatar
               containerStyle={{ position: "absolute", left: 35, zIndex: 3 }}
               size={55}
@@ -289,7 +296,7 @@ export default function MainEventScreen(props) {
           ) : null}
         </View>
         <View flex marginT-10 height={60}>
-          {checkParticipants() ? (
+          {userIsParticipant ? (
             <Button
               label={"Bereits Teilnehmer"}
               disabled={true}
@@ -304,9 +311,18 @@ export default function MainEventScreen(props) {
               label={"Beitreten"}
               size={Button.sizes.large}
               borderRadius={15}
+              disabled={userIsParticipant}
               marginH-15
               backgroundColor={Colors.secondaryColor}
               flex
+              onPress={() => {
+                updateParticipants(
+                  eventObject.eventId,
+                  user.uid,
+                  user.displayName
+                );
+                setUserIsParticipant(true);
+              }}
             />
           )}
         </View>

@@ -38,6 +38,24 @@ export async function updateFirstTimeUserById(uid, firstTimeUserData) {
     console.log(error);
   }
 }
+export async function updateParticipants(eventId, uid, userName) {
+  try {
+    const event = await axios.get(DB_LINK + "events/" + eventId + ".json");
+    let counter = 0;
+    for (const key in event.data.participants) {
+      counter++;
+    }
+    const response = await axios.put(
+      DB_LINK + "events/" + eventId + "/participants/" + counter + ".json",
+      {
+        userID: uid,
+        userName: userName,
+      }
+    );
+  } catch (error) {
+    console.log(error);
+  }
+}
 
 export async function fetchAllEvents() {
   const response = await axios.get(DB_LINK + "events.json");
