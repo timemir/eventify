@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { Pressable, SafeAreaView, ScrollView, StyleSheet } from "react-native";
+import { showLocation } from "react-native-map-link";
 import MapView, { Marker } from "react-native-maps";
 import {
   Avatar,
@@ -18,7 +19,7 @@ import { categoryImage } from "../../../util/categoriesImages";
 // Component
 export default function MainEventScreen(props) {
   const eventObject = props.route.params;
-  console.log(eventObject.category.toLowerCase());
+
   // Date Management
   const date = new Date(eventObject.date);
   const longDate = date.toLocaleDateString("de-DE").split("-");
@@ -164,7 +165,17 @@ export default function MainEventScreen(props) {
             <Text text40BO marginB-10>
               Standort
             </Text>
-            <Pressable onPress={() => console.log("Native Navigation starten")}>
+            <Pressable
+              onPress={() => {
+                showLocation({
+                  latitude: eventObject.coords.latitude,
+                  longitude: eventObject.coords.longitude,
+                  dialogTitle: "Navigation starten",
+                  dialogMessage: "",
+                  alwaysIncludeGoogle: true,
+                });
+              }}
+            >
               <View marginL-5>
                 <Text grey20 text80BO>
                   {`${eventObject.location.name}`}

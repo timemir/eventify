@@ -33,6 +33,7 @@
     "react-native-google-places": "^3.1.2",
     "react-native-google-places-autocomplete": "^2.4.1",
     "react-native-keyboard-aware-scroll-view": "^0.9.5",
+    "react-native-map-link": "^2.10.1",
     "react-native-maps": "0.30.2",
     "react-native-reanimated": "^2.8.0",
     "react-native-safe-area-context": "4.2.4",
