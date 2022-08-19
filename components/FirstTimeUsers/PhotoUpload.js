@@ -1,25 +1,29 @@
-import { StyleSheet } from "react-native";
 import React, { useState } from "react";
+import { ActivityIndicator, StyleSheet } from "react-native";
 import {
-  Card,
-  Text,
-  Spacings,
-  View,
+  BorderRadiuses,
   Button,
-  Icon,
+  Card,
   Colors,
   GridList,
-  BorderRadiuses,
-  Picker,
+  Icon,
   Image,
+  Picker,
+  Spacings,
+  Text,
+  Toast,
+  View,
 } from "react-native-ui-lib";
 
 // Expo Image Picker for Uploading Photos
 import * as ImagePicker from "expo-image-picker";
+import { uploadImage } from "../../store/http";
 
 export default function PhotoUpload(props) {
   // Image State
   const [image, setImage] = useState(null);
+  const [uploadingImage, setUploadingImage] = useState(false);
+  const [imageUploaded, setImageUploaded] = useState(false);
 
   async function pickImage() {
     let result = await ImagePicker.launchImageLibraryAsync({
@@ -69,16 +73,52 @@ export default function PhotoUpload(props) {
           </Text>
         </View>
       </View>
+      <Toast
+        visible={imageUploaded}
+        position={"top"}
+        centerMessage={true}
+        message="Foto erfolgreich hochgeladen"
+        backgroundColor={Colors.$iconSuccess}
+        autoDismiss={5000}
+        onDismiss={() => console.log("Toast dismissed")}
+      ></Toast>
       <View flex marginT-50 style={{ width: "80%" }}>
         <Button
-          label={"Foto hochladen"}
+          label={"Foto auswählen"}
           size={Button.sizes.large}
+          disabled={uploadingImage}
           backgroundColor={Colors.secondaryColor}
           borderRadius={10}
           onPress={async () => {
+            setImageUploaded(false);
             await pickImage();
           }}
         />
+        {image &&
+          (!uploadingImage ? (
+            <Button
+              label={"Foto hochladen"}
+              marginT-20
+              size={Button.sizes.large}
+              disabled={imageUploaded}
+              backgroundColor={Colors.secondaryColor}
+              borderRadius={10}
+              onPress={async () => {
+                await uploadImage(
+                  image,
+                  "users",
+                  props.user.uid.toString(),
+                  "profilePicture",
+                  setUploadingImage,
+                  setImageUploaded
+                );
+              }}
+            />
+          ) : (
+            <View marginT-20>
+              <ActivityIndicator />
+            </View>
+          ))}
       </View>
     </View>
   );

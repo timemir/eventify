@@ -1,23 +1,23 @@
-import { StyleSheet, SafeAreaView } from "react-native";
 import React, { useEffect, useState } from "react";
+import { SafeAreaView, StyleSheet } from "react-native";
 
 // RNUILib
 import {
-  Card,
-  Text,
-  Spacings,
-  View,
   Button,
+  Card,
+  Colors,
   FloatingButton,
   Icon,
-  Colors,
+  Spacings,
+  Text,
+  View,
   Wizard,
 } from "react-native-ui-lib";
 // Async Storage
 import AsyncStorage from "@react-native-async-storage/async-storage";
 // Custom Components
-import InterestsLists from "../../components/FirstTimeUsers/InterestsLists";
 import CitySelection from "../../components/FirstTimeUsers/CitySelection";
+import InterestsLists from "../../components/FirstTimeUsers/InterestsLists";
 import PhotoUpload from "../../components/FirstTimeUsers/PhotoUpload";
 
 // HTTP Requests
@@ -26,6 +26,7 @@ import { updateFirstTimeUserById } from "../../store/http";
 
 // Firebase Auth
 import { getAuth } from "firebase/auth";
+import { auth } from "../../store/firebase";
 
 export default function FirstTimeUserScreen(props) {
   async function removeFirstTimeUserStatus() {
@@ -193,10 +194,12 @@ export default function FirstTimeUserScreen(props) {
   }
   function renderPhoto() {
     const stopNextStep = false;
+    const user = auth.currentUser;
+
     return (
       <View style={styles.stepContainer}>
         {console.log(activeIndex)}
-        <PhotoUpload onChange={childToParentPhoto} />
+        <PhotoUpload user={user} onChange={childToParentPhoto} />
         <View row spread>
           <View flex left>
             {renderPrevButton()}
@@ -230,7 +233,7 @@ export default function FirstTimeUserScreen(props) {
 
   // Main return
   return (
-    <View useSafeArea style={{ marginBottom: 0 }} flex>
+    <View useSafeArea style={{ marginBottom: 50 }} flex>
       <View flex-1>
         <Wizard
           activeIndex={activeIndex}

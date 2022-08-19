@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useLayoutEffect, useState } from "react";
 import { SafeAreaView, ScrollView, StyleSheet } from "react-native";
 import Ionicons from "react-native-vector-icons/Ionicons";
 // RNUILib
@@ -15,7 +15,6 @@ import {
 import EventSection from "../../components/UI/HomeScreen/EventSection";
 import loadFoundationConfig from "../../RNUILib/FoundationConfig";
 import { GlobalStyles } from "../../util/GlobalColors";
-loadFoundationConfig();
 
 // http helper functions
 import { fetchAllCategories, fetchAllEvents } from "../../store/http";
@@ -23,13 +22,17 @@ import { fetchAllCategories, fetchAllEvents } from "../../store/http";
 import { useIsFocused } from "@react-navigation/native";
 
 export default function HomeScreen(props) {
+  loadFoundationConfig();
+  //
   // State for all Events
   const [fetchedCategories, setFetchedCategories] = useState([]);
   // All Events as an Object inside an Array -> [{ }, { }, { }]
   const [fetchedEvents, setFetchedEvents] = useState([]);
+  // React Navigation Hook
+  const isFocused = useIsFocused();
 
   // Fetch all Categories
-  useEffect(() => {
+  useLayoutEffect(() => {
     async function getCategories() {
       const categories = await fetchAllCategories();
       setFetchedCategories(categories);
@@ -37,10 +40,8 @@ export default function HomeScreen(props) {
     getCategories();
   }, []);
 
-  // React Navigation Hook
-  const isFocused = useIsFocused();
   // Fetch all Events
-  useEffect(() => {
+  useLayoutEffect(() => {
     // Rerun useEffect Function if we re-enter the HomeScreen
     if (isFocused) {
       // Helper Function, because we cannot set useEffect function as async. not allowed!

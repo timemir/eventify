@@ -32,6 +32,7 @@ import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { auth } from "../../store/firebase";
 // Axios - HTTP Request
 import axios from "axios";
+import { updateCreatedEventsByUser } from "../../store/http";
 // Global Auth Context
 import { AuthContext } from "../../store/auth-context";
 // Incubators are experimental Components from RNUILib
@@ -410,6 +411,7 @@ export default function EventCreation(props) {
                 participants: [
                   { userID: user.uid, userName: user.displayName },
                 ],
+                createdOn: new Date().toISOString(),
               };
               setHttpPosting(true);
               axios
@@ -418,7 +420,8 @@ export default function EventCreation(props) {
                   eventObject
                 )
                 .then(function (response) {
-                  console.log(response);
+                  // console.log(response);
+                  updateCreatedEventsByUser(user.uid, eventObject.createdOn);
                   setHttpPosting(false);
                   props.navigation.goBack();
                 })
