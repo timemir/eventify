@@ -1,5 +1,6 @@
 import axios from "axios";
 import React, { useLayoutEffect, useState } from "react";
+import { Image, Pressable, StyleSheet, Text, View } from "react-native";
 import { auth } from "../../store/firebase";
 import { fetchUserById } from "../../store/http";
 //TODO : Connect Image Source with User Profile Picture from Firebase

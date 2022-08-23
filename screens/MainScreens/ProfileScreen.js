@@ -1,5 +1,5 @@
 import React, { useEffect, useLayoutEffect, useState } from "react";
-import { ScrollView, StyleSheet } from "react-native";
+import { Pressable, ScrollView, StyleSheet } from "react-native";
 import {
   BorderRadiuses,
   Button,
@@ -35,11 +35,15 @@ export default function ProfileScreen(props) {
   const [userData, setUserData] = useState(null);
   const [createdEventsIds, setCreatedEventsIds] = useState([]);
   const [createdEventsData, setCreatedEventsData] = useState([]);
+
   // Get UserData from Firebase
   async function getUserData() {
     try {
       // TODO: set fetchUserById to props.uid so we fetch the user we clicked on!
-      const userData = await fetchUserById(user.uid);
+      const userToFetch = props.route?.params?.uid
+        ? props.route?.params?.uid
+        : user.uid;
+      const userData = await fetchUserById(userToFetch);
       setUserData(userData);
     } catch (error) {
       console.log(error);
@@ -51,20 +55,32 @@ export default function ProfileScreen(props) {
     // console.log(userData);
   }, []);
 
-  const DUMMY_ARRAY = [
-    "Sport",
-    "stadtDORTMUND",
-    "Schwimmen",
-    "Rennen",
-    "Tauchen",
-    "Schach",
-    "Yoga",
-  ];
+  useEffect(() => {
+    // set the headerRight of props.navigation to a button that edits the profile if user.uid === userData.id
+    props.navigation.setOptions({
+      headerRight: () => {
+        if (user.uid === userData?.uid) {
+          return (
+            <Pressable
+              onPress={() =>
+                props.navigation.navigate("editProfileScreen", {
+                  userData: userData,
+                })
+              }
+            >
+              <Text marginR-5>Profil bearbeiten</Text>
+            </Pressable>
+          );
+        }
+      },
+    });
+  }, []);
+
   useEffect(() => {
     async function fetchCreatedEventsIds() {
       let array = await getCreatedEventsById(user.uid);
       // have to shift, because for some reason the first entry is "null"
-      array.shift();
+      array?.shift();
       setCreatedEventsIds(array);
     }
     fetchCreatedEventsIds();
@@ -131,7 +147,6 @@ export default function ProfileScreen(props) {
               <View
                 height={150}
                 width={150}
-                bg-blue20
                 style={{ borderRadius: 75, overflow: "hidden" }}
               >
                 <Image
@@ -145,13 +160,15 @@ export default function ProfileScreen(props) {
                 text40BO
               >{`${userData?.firstName} ${userData?.lastName}`}</Text>
               <Text text80L>{`${
-                userData?.city ? userData?.city : "Deutschland"
+                userData?.city ? userData?.city.value : "Deutschland"
               }`}</Text>
             </View>
             <View marginT-40 center>
               <Text center text80BO>
-                Ich bin Tim und komme aus Dortmund. Folge mir, um zu sehen was
-                ich alles so in meiner Stadt unternehme!
+                BESCHREIBUNGSTEXT: Dolor minim minim aute duis ex laborum
+                excepteur voluptate. Cupidatat minim aliquip nisi ullamco
+                pariatur cupidatat aute amet in adipisicing. Aute reprehenderit
+                velit qui. Pariatur esse magna aliquip fugiat velit ut.
               </Text>
             </View>
             <View center marginT-15>

@@ -20,6 +20,7 @@ import HomeScreen from "./screens/MainScreens/HomeScreen";
 import MapScreen from "./screens/MainScreens/MapScreen";
 import ProfileScreen from "./screens/MainScreens/ProfileScreen";
 import SearchScreen from "./screens/MainScreens/SearchScreen";
+import EditProfileScreen from "./screens/SettingsScreens/EditProfileScreen";
 // Global Context
 import { useContext, useEffect, useLayoutEffect, useState } from "react";
 import AuthContextProvider, { AuthContext } from "./store/auth-context";
@@ -74,7 +75,13 @@ function DrawerNavigator() {
           // drawerItemStyle: { height: 0 }, // Hide a Drawer Item from showing inside Drawer
         })}
       />
-      <Drawer.Screen name="Profil" component={ProfileScreen} />
+      <Drawer.Screen
+        name="Profil"
+        component={ProfileScreen}
+        options={({ route }) => ({
+          headerRight: (props) => <Text {...props}></Text>,
+        })}
+      />
       <Drawer.Screen name="Einstellungen" component={UserSettings} />
       {user.email === "admin@admin.com" && (
         <Drawer.Screen name="Admin Dashboard" component={AdminDashboard} />
@@ -168,6 +175,7 @@ function AuthenticatedStack() {
       <Stack.Screen name="bottomTabs" component={BottomTabNavigator} />
       <Stack.Screen name="firstTimeUser" component={FirstTimeUserScreen} />
       <Stack.Screen name="mainEventScreen" component={MainEventScreen} />
+      <Stack.Screen name="editProfileScreen" component={EditProfileScreen} />
       <Stack.Group screenOptions={{ presentation: "modal" }}>
         <Stack.Screen name="eventCreation" component={EventCreation} />
         <Stack.Screen name="eventCreationMap" component={MapModal} />
