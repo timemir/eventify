@@ -124,10 +124,18 @@ export default function EventCreation(props) {
             <LoaderScreen message={"Creating Event..."} color={Colors.grey40} />
           </View>
         )}
-
-        <Text text40 grey20 marginB-30 center>
-          Event Erstellung
-        </Text>
+        <View row>
+          <Ionicons
+            onPress={() => props.navigation.goBack()}
+            name="arrow-back-outline"
+            size={24}
+            color={Colors.secondaryColor}
+            style={{ marginRight: 20 }}
+          />
+          <Text text40 grey20 marginB-30 center>
+            Event Erstellung
+          </Text>
+        </View>
         {/* Inputfield - Event title */}
         <Card
           row

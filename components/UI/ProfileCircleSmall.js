@@ -1,6 +1,5 @@
-import { Image, Pressable, StyleSheet, Text, View } from "react-native";
-import React, { useLayoutEffect, useState } from "react";
 import axios from "axios";
+import React, { useLayoutEffect, useState } from "react";
 import { auth } from "../../store/firebase";
 import { fetchUserById } from "../../store/http";
 //TODO : Connect Image Source with User Profile Picture from Firebase
@@ -11,7 +10,7 @@ export default function ProfileCircleSmall(props) {
   async function getUserPhoto() {
     try {
       const userData = await fetchUserById(user.uid);
-      if (userData.photo.uri) {
+      if (userData?.photo.uri) {
         setPhotoPath(userData.photo.uri);
       } else {
         console.log("No Photo Uploaded - Using Default Avatar");
