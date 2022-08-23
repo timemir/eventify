@@ -34,6 +34,7 @@ import { auth } from "./store/firebase";
 // Async Storage for tracking if we have a first time user
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import MainEventScreen from "./components/UI/HomeScreen/MainEventScreen";
+import ParticipantsList from "./components/UI/ParticipantsList";
 import AdminDashboard from "./screens/SettingsScreens/AdminDashboard";
 import UserSettings from "./screens/SettingsScreens/UserSettings";
 // ----------------------------------------------------------------
@@ -170,6 +171,7 @@ function AuthenticatedStack() {
       <Stack.Group screenOptions={{ presentation: "modal" }}>
         <Stack.Screen name="eventCreation" component={EventCreation} />
         <Stack.Screen name="eventCreationMap" component={MapModal} />
+        <Stack.Screen name="participants" component={ParticipantsList} />
       </Stack.Group>
     </Stack.Navigator>
   );

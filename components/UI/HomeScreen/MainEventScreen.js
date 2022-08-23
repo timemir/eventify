@@ -413,47 +413,55 @@ export default function MainEventScreen(props) {
       </ScrollView>
       <View row>
         <View row flex marginT-15 marginL-20>
-          {eventObject.participants.length >= 1 ? (
-            <Avatar
-              containerStyle={{ position: "absolute", left: 5, zIndex: 1 }}
-              size={55}
-              source={{
-                uri: "https://lh3.googleusercontent.com/-cw77lUnOvmI/AAAAAAAAAAI/AAAAAAAAAAA/WMNck32dKbc/s181-c/104220521160525129167.jpg",
-              }}
-              label={"IT"}
-            />
-          ) : null}
-          {eventObject.participants.length >= 2 ? (
-            <Avatar
-              containerStyle={{ position: "absolute", left: 20, zIndex: 2 }}
-              size={55}
-              source={{
-                uri: "https://lh3.googleusercontent.com/-cw77lUnOvmI/AAAAAAAAAAI/AAAAAAAAAAA/WMNck32dKbc/s181-c/104220521160525129167.jpg",
-              }}
-              label={"IT"}
-            />
-          ) : null}
-          {eventObject.participants.length >= 3 ? (
-            <Avatar
-              containerStyle={{ position: "absolute", left: 35, zIndex: 3 }}
-              size={55}
-              source={{
-                uri: "https://lh3.googleusercontent.com/-cw77lUnOvmI/AAAAAAAAAAI/AAAAAAAAAAA/WMNck32dKbc/s181-c/104220521160525129167.jpg",
-              }}
-              label={"IT"}
-              badgePosition="BOTTOM_RIGHT"
-              badgeProps={{
-                label: `+${
-                  eventObject.participants.length > 3
-                    ? eventObject.participants.length - 3
-                    : null
-                }`,
-                size: 24,
-                borderWidth: 1.5,
-                borderColor: Colors.$outlineInverted,
-              }}
-            />
-          ) : null}
+          <Pressable
+            onPress={() =>
+              props.navigation.navigate("participants", {
+                participants: eventObject.participants,
+              })
+            }
+          >
+            {eventObject.participants.length >= 1 ? (
+              <Avatar
+                containerStyle={{ position: "absolute", left: 5, zIndex: 1 }}
+                size={55}
+                source={{
+                  uri: "https://lh3.googleusercontent.com/-cw77lUnOvmI/AAAAAAAAAAI/AAAAAAAAAAA/WMNck32dKbc/s181-c/104220521160525129167.jpg",
+                }}
+                label={"IT"}
+              />
+            ) : null}
+            {eventObject.participants.length >= 2 ? (
+              <Avatar
+                containerStyle={{ position: "absolute", left: 20, zIndex: 2 }}
+                size={55}
+                source={{
+                  uri: "https://lh3.googleusercontent.com/-cw77lUnOvmI/AAAAAAAAAAI/AAAAAAAAAAA/WMNck32dKbc/s181-c/104220521160525129167.jpg",
+                }}
+                label={"IT"}
+              />
+            ) : null}
+            {eventObject.participants.length >= 3 ? (
+              <Avatar
+                containerStyle={{ position: "absolute", left: 35, zIndex: 3 }}
+                size={55}
+                source={{
+                  uri: "https://lh3.googleusercontent.com/-cw77lUnOvmI/AAAAAAAAAAI/AAAAAAAAAAA/WMNck32dKbc/s181-c/104220521160525129167.jpg",
+                }}
+                label={"IT"}
+                badgePosition="BOTTOM_RIGHT"
+                badgeProps={{
+                  label: `+${
+                    eventObject.participants.length > 3
+                      ? eventObject.participants.length - 3
+                      : 0
+                  }`,
+                  size: 24,
+                  borderWidth: 1.5,
+                  borderColor: Colors.$outlineInverted,
+                }}
+              />
+            ) : null}
+          </Pressable>
         </View>
 
         <View flex marginT-10 height={60}>
