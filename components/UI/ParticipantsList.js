@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { FlatList, ScrollView, StyleSheet } from "react-native";
 import {
   Avatar,
@@ -13,11 +13,33 @@ import {
   Text,
   View,
 } from "react-native-ui-lib";
-
+import { auth } from "../../store/firebase";
+import { removeRequester, updateParticipants } from "../../store/http";
 export default function ParticipantsList(props) {
+  // Have to remove first entry, because it is always empty
+  const [participants, setParticipants] = useState([]);
+  const [entryRequests, setEntryRequests] = useState([]);
+  const [currentUserIsCreator, setCurrentUserIsCreator] = useState(false);
+  useEffect(() => {
+    setParticipants(props.route.params?.participants);
+  }, []);
+  useEffect(() => {
+    if (props.route.params?.entryRequests?.length > 1) {
+      props.route.params?.entryRequests?.shift();
+      setEntryRequests(props.route.params.entryRequests);
+    }
+  }, []);
+
+  useEffect(() => {
+    const user = auth.currentUser;
+    if (user.uid === props.route.params.creator) {
+      setCurrentUserIsCreator(true);
+    }
+  }, []);
+
   function renderItem({ item }) {
     return (
-      <View flex row centerV marginV-5 key={item.userId}>
+      <View flex row centerV marginV-5 key={item.userID}>
         <Avatar
           containerStyle={{}}
           size={60}
@@ -28,14 +50,92 @@ export default function ParticipantsList(props) {
         />
         <Card
           flex
+          row
           enableShadow={false}
           marginL-10
-          onPress={() => console.log("Go to their Profile Screen")}
+          onPress={() => {
+            props.navigation.goBack();
+            props.navigation.navigate("userProfileScreen", {
+              userId: item.userID,
+            });
+          }}
         >
-          <View>
-            <Text text60>{`${item.userName}`}</Text>
+          <View center>
+            <Text text60>{`${item?.userName}`}</Text>
           </View>
         </Card>
+      </View>
+    );
+  }
+
+  function renderItemRequests({ item }) {
+    return (
+      <View flex row centerV marginV-5 key={item.userID}>
+        <Avatar
+          containerStyle={{}}
+          size={60}
+          source={{
+            uri: "https://lh3.googleusercontent.com/-cw77lUnOvmI/AAAAAAAAAAI/AAAAAAAAAAA/WMNck32dKbc/s181-c/104220521160525129167.jpg",
+          }}
+          label={"IT"}
+        />
+
+        <Card
+          flex
+          row
+          enableShadow={false}
+          marginL-10
+          onPress={() => {
+            props.navigation.goBack();
+            props.navigation.navigate("userProfileScreen", {
+              userId: item.userID,
+            });
+          }}
+        >
+          <View center>
+            <Text text60>{`${item?.userName}`}</Text>
+          </View>
+        </Card>
+
+        <View flex>
+          <Button
+            flex
+            label="Annehmen"
+            onPress={() => {
+              console.log("Request angenommen");
+              removeRequester(props.route.params.eventId, item.userID);
+              updateParticipants(
+                props.route.params.eventId,
+                item.userID,
+                item?.userName
+              );
+              setParticipants([...participants, item]);
+              setEntryRequests(
+                entryRequests.filter((entry) => entry.userID != item.userID)
+              );
+              // TODO: Send Notification to User that request was accepted
+            }}
+            size={Button.sizes.small}
+            borderRadius={10}
+            backgroundColor={Colors.green30}
+            marginB-1
+            marginT-1
+          />
+          <Button
+            flex
+            label="Ablehnen"
+            onPress={() => {
+              console.log("Request abgelehnt");
+              removeRequester(props.route.params.eventId, item.userID);
+              // TODO: Send notification to user that request was rejected
+            }}
+            size={Button.sizes.small}
+            borderRadius={10}
+            backgroundColor={Colors.red30}
+            marginT-1
+            marginB-1
+          />
+        </View>
       </View>
     );
   }
@@ -45,11 +145,18 @@ export default function ParticipantsList(props) {
         Teilnehmer
       </Text>
       <ScrollView style={{ flex: 1 }}>
-        <FlatList
-          data={props.route.params?.participants}
-          renderItem={renderItem}
-        />
+        <FlatList data={participants} renderItem={renderItem} />
       </ScrollView>
+      {currentUserIsCreator && props.route.params.entryRequests.length >= 1 && (
+        <View flex>
+          <Text center text40BO marginB-20>
+            Anfragen
+          </Text>
+          <ScrollView style={{ flex: 1 }}>
+            <FlatList data={entryRequests} renderItem={renderItemRequests} />
+          </ScrollView>
+        </View>
+      )}
     </View>
   );
 }

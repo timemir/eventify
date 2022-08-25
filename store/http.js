@@ -106,6 +106,41 @@ export async function updateParticipants(eventId, uid, userName) {
     console.log(error);
   }
 }
+export async function removeRequester(eventId, uid) {
+  try {
+    const event = await axios.get(DB_LINK + "events/" + eventId + ".json");
+    let counter = null;
+    for (const key in event.data.entryRequests) {
+      if (event.data.entryRequests[key].userID === uid) {
+        counter = key;
+      }
+    }
+    const response = await axios.put(
+      DB_LINK + "events/" + eventId + "/entryRequests/" + counter + ".json",
+      {}
+    );
+  } catch (error) {
+    console.log(error);
+  }
+}
+export async function updateParticipationRequest(eventId, uid, userName) {
+  try {
+    const event = await axios.get(DB_LINK + "events/" + eventId + ".json");
+    let counter = 0;
+    for (const key in event.data.entryRequests) {
+      counter++;
+    }
+    const response = await axios.put(
+      DB_LINK + "events/" + eventId + "/entryRequests/" + counter + ".json",
+      {
+        userID: uid,
+        userName: userName,
+      }
+    );
+  } catch (error) {
+    console.log(error);
+  }
+}
 
 export async function fetchAllEvents() {
   const response = await axios.get(DB_LINK + "events.json");
@@ -124,6 +159,8 @@ export async function fetchAllEvents() {
       location: response.data[key].googleMapsData,
       participants: response.data[key].participants,
       description: response.data[key].description,
+      private: response.data[key].private,
+      entryRequests: response.data[key].entryRequests,
     };
     eventsList.push(eventObject);
   }

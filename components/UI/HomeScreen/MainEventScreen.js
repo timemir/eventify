@@ -1,4 +1,5 @@
 import * as Calendar from "expo-calendar";
+
 import React, { useEffect, useState } from "react";
 import { Pressable, SafeAreaView, ScrollView, StyleSheet } from "react-native";
 import { showLocation } from "react-native-map-link";
@@ -16,14 +17,21 @@ import {
   Text,
   View,
 } from "react-native-ui-lib";
+import Ionicons from "react-native-vector-icons/Ionicons";
 import { auth } from "../../../store/firebase";
-import { updateParticipants } from "../../../store/http";
+import {
+  updateParticipants,
+  updateParticipationRequest,
+} from "../../../store/http";
 import { categoryImage } from "../../../util/categoriesImages";
 const { Toast } = Incubator;
 // Async Storage to store first time user created
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { create } from "yup/lib/array";
 // Component
+//
+//
+//
 export default function MainEventScreen(props) {
   const eventObject = props.route.params;
   // console.log(eventObject);
@@ -50,8 +58,11 @@ export default function MainEventScreen(props) {
   }
   // Auth Handling
   const user = auth.currentUser;
+
   // Check if user is already participant of the event
   const [userIsParticipant, setUserIsParticipant] = useState(false);
+  const [userIsRequester, setUserIsRequester] = useState(false);
+  const [updateState, setUpdateState] = useState(false);
   function checkParticipants() {
     let userIsParticipant = false;
 
@@ -66,9 +77,24 @@ export default function MainEventScreen(props) {
     });
     return userIsParticipant;
   }
+  function checkRequesters() {
+    let userIsRequester = false;
+
+    eventObject.entryRequests.every((requester) => {
+      if (requester.userID === user.uid) {
+        userIsRequester = true;
+        setUserIsRequester(true);
+        return false;
+      } else {
+        return true;
+      }
+    });
+    return userIsParticipant;
+  }
   useEffect(() => {
     checkParticipants();
-  }, [userIsParticipant]);
+    checkRequesters();
+  }, [userIsParticipant, userIsRequester]);
 
   const [mapRegion, setMapRegion] = useState({
     latitude: eventObject.coords.latitude,
@@ -217,6 +243,12 @@ export default function MainEventScreen(props) {
       }
     })();
   }
+
+  useEffect(() => {
+    console.log(eventObject);
+  }, []);
+
+  // MAIN RETURN
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView style={{ flex: 1 }}>
@@ -412,17 +444,30 @@ export default function MainEventScreen(props) {
         ></Toast>
       </ScrollView>
       <View row>
-        <View row flex marginT-15 marginL-20>
+        <View row flex marginT-5 marginL-20>
           <Pressable
             onPress={() =>
               props.navigation.navigate("participants", {
                 participants: eventObject.participants,
+                entryRequests: eventObject.entryRequests,
+                eventId: eventObject.eventId,
+                creator: eventObject.createdBy.userID,
+                currentState: updateState,
+                updateState: setUpdateState,
               })
             }
           >
+            <Text text80BO center>
+              Teilnehmer
+            </Text>
             {eventObject.participants.length >= 1 ? (
               <Avatar
-                containerStyle={{ position: "absolute", left: 5, zIndex: 1 }}
+                containerStyle={{
+                  position: "absolute",
+                  left: 5,
+                  top: 18,
+                  zIndex: 1,
+                }}
                 size={55}
                 source={{
                   uri: "https://lh3.googleusercontent.com/-cw77lUnOvmI/AAAAAAAAAAI/AAAAAAAAAAA/WMNck32dKbc/s181-c/104220521160525129167.jpg",
@@ -432,7 +477,12 @@ export default function MainEventScreen(props) {
             ) : null}
             {eventObject.participants.length >= 2 ? (
               <Avatar
-                containerStyle={{ position: "absolute", left: 20, zIndex: 2 }}
+                containerStyle={{
+                  position: "absolute",
+                  left: 20,
+                  top: 18,
+                  zIndex: 2,
+                }}
                 size={55}
                 source={{
                   uri: "https://lh3.googleusercontent.com/-cw77lUnOvmI/AAAAAAAAAAI/AAAAAAAAAAA/WMNck32dKbc/s181-c/104220521160525129167.jpg",
@@ -442,7 +492,12 @@ export default function MainEventScreen(props) {
             ) : null}
             {eventObject.participants.length >= 3 ? (
               <Avatar
-                containerStyle={{ position: "absolute", left: 35, zIndex: 3 }}
+                containerStyle={{
+                  position: "absolute",
+                  left: 35,
+                  top: 18,
+                  zIndex: 3,
+                }}
                 size={55}
                 source={{
                   uri: "https://lh3.googleusercontent.com/-cw77lUnOvmI/AAAAAAAAAAI/AAAAAAAAAAA/WMNck32dKbc/s181-c/104220521160525129167.jpg",
@@ -464,8 +519,80 @@ export default function MainEventScreen(props) {
           </Pressable>
         </View>
 
-        <View flex marginT-10 height={60}>
-          {userIsParticipant ? (
+        <View flex marginT-15 height={60}>
+          {!eventObject.private &&
+            (userIsParticipant ? (
+              <Button
+                label={"Bereits Teilnehmer"}
+                disabled={true}
+                size={Button.sizes.large}
+                borderRadius={15}
+                marginH-15
+                backgroundColor={Colors.secondaryColor}
+                flex
+              />
+            ) : (
+              <Button
+                label={"Beitreten"}
+                size={Button.sizes.large}
+                borderRadius={15}
+                disabled={userIsParticipant}
+                marginH-15
+                backgroundColor={Colors.secondaryColor}
+                flex
+                onPress={() => {
+                  updateParticipants(
+                    eventObject.eventId,
+                    user.uid,
+                    user.displayName
+                  );
+                  setUserIsParticipant(true);
+                }}
+              />
+            ))}
+
+          {eventObject.private &&
+            !userIsParticipant &&
+            (!userIsRequester ? (
+              <Button
+                label={"Anfragen"}
+                size={Button.sizes.large}
+                borderRadius={15}
+                disabled={userIsParticipant}
+                marginH-15
+                backgroundColor={Colors.secondaryColor}
+                flex
+                iconSource={() => {
+                  return (
+                    <Ionicons
+                      name="lock-closed-outline"
+                      size={24}
+                      color="white"
+                      style={{ marginRight: 20 }}
+                    />
+                  );
+                }}
+                onPress={() => {
+                  updateParticipationRequest(
+                    eventObject.eventId,
+                    user.uid,
+                    user.displayName
+                  );
+                  setUserIsRequester(true);
+                }}
+              />
+            ) : (
+              <Button
+                label={"Anfrage gesendet"}
+                disabled={true}
+                size={Button.sizes.large}
+                borderRadius={15}
+                marginH-15
+                backgroundColor={Colors.secondaryColor}
+                flex
+              />
+            ))}
+          {userIsParticipant && eventObject.private && (
             <Button
               label={"Bereits Teilnehmer"}
               disabled={true}
@@ -474,24 +601,6 @@ export default function MainEventScreen(props) {
               marginH-15
               backgroundColor={Colors.secondaryColor}
               flex
-            />
-          ) : (
-            <Button
-              label={"Beitreten"}
-              size={Button.sizes.large}
-              borderRadius={15}
-              disabled={userIsParticipant}
-              marginH-15
-              backgroundColor={Colors.secondaryColor}
-              flex
-              onPress={() => {
-                updateParticipants(
-                  eventObject.eventId,
-                  user.uid,
-                  user.displayName
-                );
-                setUserIsParticipant(true);
-              }}
             />
           )}
         </View>

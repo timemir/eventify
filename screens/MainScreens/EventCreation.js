@@ -10,6 +10,7 @@ import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view
 import {
   Button,
   Card,
+  Checkbox,
   Colors,
   Constants,
   DateTimePicker,
@@ -61,7 +62,7 @@ export default function EventCreation(props) {
     latitude: 0,
     longitude: 0,
   });
-  const [dialogState, setDialogState] = useState(false);
+  const [privatStatus, setPrivatStatus] = useState(false);
   // HTTP POST State
   const [httpPosting, setHttpPosting] = useState(false);
   // Final Validation State
@@ -391,6 +392,37 @@ export default function EventCreation(props) {
             />
           </View>
         </Card>
+        {/* Inputfield - Privat Status  */}
+
+        <Card
+          row
+          padding-10
+          height={80}
+          centerV
+          marginB-20
+          style={{ backgroundColor: Colors.greyBackgroundColor }}
+        >
+          <Ionicons
+            name="lock-closed-outline"
+            size={24}
+            color="grey"
+            style={{ marginRight: 20 }}
+          />
+
+          <View flex centerH>
+            <View width={"90%"}>
+              <Text grey40 marginB-10>
+                Soll dein Event privat sein?
+              </Text>
+            </View>
+            <Checkbox
+              value={privatStatus}
+              onValueChange={() => setPrivatStatus(!privatStatus)}
+              borderRadius={10}
+              color={Colors.secondaryColor}
+            />
+          </View>
+        </Card>
 
         {/* Submit Button */}
         <Button
@@ -420,6 +452,8 @@ export default function EventCreation(props) {
                   { userID: user.uid, userName: user.displayName },
                 ],
                 createdOn: new Date().toISOString(),
+                private: privatStatus,
+                entryRequests: [{ userID: "", userName: "" }],
               };
               setHttpPosting(true);
               axios

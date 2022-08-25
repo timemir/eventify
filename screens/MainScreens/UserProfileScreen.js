@@ -20,6 +20,7 @@ import {
   Toast,
   View,
 } from "react-native-ui-lib";
+import Ionicons from "react-native-vector-icons/Ionicons";
 import ProfilePhoto from "../../components/Settings/ProfilePhoto";
 import { auth } from "../../store/firebase";
 import {
@@ -29,7 +30,7 @@ import {
 } from "../../store/http";
 import { categoryImage } from "../../util/categoriesImages";
 
-export default function ProfileScreen(props) {
+export default function UserProfileScreen(props) {
   const user = auth.currentUser;
 
   const [userData, setUserData] = useState(null);
@@ -39,8 +40,6 @@ export default function ProfileScreen(props) {
   // Get UserData from Firebase
   async function getUserData() {
     try {
-      // TODO: set fetchUserById to props.uid so we fetch the user we clicked on!
-      console.log(props.route.params);
       let userToFetch = "";
       if (props.route.params?.userId) {
         userToFetch = props.route.params.userId;
@@ -48,14 +47,12 @@ export default function ProfileScreen(props) {
         userToFetch = user.uid;
       }
 
-      console.log(userToFetch);
       const userData = await fetchUserById(userToFetch);
       setUserData(userData);
     } catch (error) {
       console.log(error);
     }
   }
-  // console.log(props.route?.params);
 
   useLayoutEffect(() => {
     async function loadUserData() {
@@ -66,48 +63,27 @@ export default function ProfileScreen(props) {
   }, []);
 
   useEffect(() => {
-    // set the headerRight of props.navigation to a button that edits the profile if user.uid === userData.id
-    props.navigation.setOptions({
-      headerRight: () => {
-        if (user.uid === userData?.uid) {
-          return (
-            <Pressable
-              onPress={() =>
-                props.navigation.navigate("editProfileScreen", {
-                  userData: userData,
-                })
-              }
-            >
-              <Text marginR-5>Profil bearbeiten</Text>
-            </Pressable>
-          );
-        }
-      },
-    });
-  }, []);
-
-  useEffect(() => {
     async function fetchCreatedEventsIds() {
-      let array = await getCreatedEventsById(user.uid);
+      let array = await getCreatedEventsById(props.route.params.userId);
       // have to shift, because for some reason the first entry is "null"
       array?.shift();
       setCreatedEventsIds(array);
     }
     fetchCreatedEventsIds();
 
-    console.log(createdEventsIds);
-  }, []);
+    // console.log(createdEventsIds);
+  }, [props.route.params.userId]);
 
   useEffect(() => {
     async function fetchCreatedEventsData() {
       let arraytwo = await getCreatedEventsInProfile(createdEventsIds);
-      console.log(arraytwo);
+      //   console.log(arraytwo);
 
       setCreatedEventsData(arraytwo);
     }
     fetchCreatedEventsData();
     // console.log(createdEventsData);
-  }, []);
+  }, [createdEventsIds]);
 
   function eventsCreatedBy({ item }) {
     return (
@@ -130,7 +106,7 @@ export default function ProfileScreen(props) {
 
   return (
     <ScrollView style={{ flex: 1, backgroundColor: Colors.white }}>
-      <View flex marginB-60>
+      <View flex marginB-60 bg-grey70>
         {/* <ProfilePhoto />
       <Text>{`User ID: ${user.uid}`}</Text>
       <Text>{`Name: ${user.displayName}`}</Text>
@@ -144,27 +120,42 @@ export default function ProfileScreen(props) {
       ) : (
         <Text>No interests</Text>
       )} */}
-        <View flex bg-grey70>
-          <View
-            flex
-            bg-white
-            marginT-100
-            padding-20
-            style={{ borderTopLeftRadius: 30, borderTopRightRadius: 30 }}
-          >
-            {/* top = half of circle height/width; left = padding amount of top View */}
-            <View width={"100%"} center abs style={{ top: -75, left: 20 }}>
-              <View
-                height={150}
-                width={150}
-                style={{ borderRadius: 75, overflow: "hidden" }}
-              >
-                <Image
-                  source={{ uri: userData?.photo?.uri }}
-                  style={{ width: 150, height: 150 }}
-                />
-              </View>
+
+        <View
+          flex
+          bg-white
+          marginT-100
+          padding-20
+          style={{ borderTopLeftRadius: 30, borderTopRightRadius: 30 }}
+        >
+          <View style={{ position: "absolute", left: 15, top: 15, zIndex: 10 }}>
+            <Ionicons
+              onPress={() => props.navigation.goBack()}
+              name="arrow-back-outline"
+              size={32}
+              color={Colors.secondaryColor}
+              style={{ marginRight: 20 }}
+            />
+          </View>
+          {/* top = half of circle height/width; left = padding amount of top View */}
+          <View width={"100%"} center abs style={{ top: -55, left: 20 }}>
+            <View
+              height={150}
+              width={150}
+              style={{
+                borderRadius: 75,
+                overflow: "hidden",
+                backgroundColor: "blue",
+                zIndex: 100,
+              }}
+            >
+              <Image
+                source={{ uri: userData?.photo?.uri }}
+                style={{ width: 150, height: 150 }}
+              />
             </View>
+          </View>
+          <View flex>
             <View center marginT-90>
               <Text
                 text40BO
@@ -181,7 +172,7 @@ export default function ProfileScreen(props) {
                 velit qui. Pariatur esse magna aliquip fugiat velit ut.
               </Text>
             </View>
-            <View center marginT-15>
+            <View center marginV-15>
               {user.uid != userData?.uid ? (
                 <Button
                   label="Follow"
