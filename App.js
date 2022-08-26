@@ -38,6 +38,10 @@ import MainEventScreen from "./components/UI/HomeScreen/MainEventScreen";
 import ParticipantsList from "./components/UI/ParticipantsList";
 import UserProfileScreen from "./screens/MainScreens/UserProfileScreen";
 import AdminDashboard from "./screens/SettingsScreens/AdminDashboard";
+import ManageEvents from "./screens/SettingsScreens/AdminScreens/ManageEvents";
+import ManagePush from "./screens/SettingsScreens/AdminScreens/ManagePush";
+import ManageUserDetails from "./screens/SettingsScreens/AdminScreens/ManageUserDetails";
+import ManageUsers from "./screens/SettingsScreens/AdminScreens/ManageUsers";
 import UserSettings from "./screens/SettingsScreens/UserSettings";
 // ----------------------------------------------------------------
 
@@ -103,9 +107,9 @@ function BottomTabNavigator() {
 
           if (route.name === "Home-Drawer") {
             iconName = focused ? "home" : "home-outline";
-          } else if (route.name === "Search") {
+          } else if (route.name === "Suche") {
             iconName = focused ? "search" : "search-outline";
-          } else if (route.name === "Map") {
+          } else if (route.name === "Karte") {
             iconName = focused ? "map" : "map-outline";
           }
           // You can return any component that you like here!
@@ -131,9 +135,9 @@ function BottomTabNavigator() {
         component={DrawerNavigator}
         options={{ tabBarBadge: 3, tabBarLabel: "Home" }} // TODO: Connect to something relevant?
       />
-      <BottomTab.Screen name="Search" component={SearchScreen} />
-      <BottomTab.Screen name="Map" component={MapScreen} />
-      <BottomTab.Screen name="TESTING" component={FirstTimeUserScreen} />
+      <BottomTab.Screen name="Suche" component={SearchScreen} />
+      <BottomTab.Screen name="Karte" component={MapScreen} />
+      <BottomTab.Screen name="TESTING" component={AdminDashboard} />
     </BottomTab.Navigator>
   );
 }
@@ -178,6 +182,10 @@ function AuthenticatedStack() {
       <Stack.Screen name="mainEventScreen" component={MainEventScreen} />
       <Stack.Screen name="editProfileScreen" component={EditProfileScreen} />
       <Stack.Screen name="userProfileScreen" component={UserProfileScreen} />
+      <Stack.Screen name="manageUsers" component={ManageUsers} />
+      <Stack.Screen name="manageUserDetails" component={ManageUserDetails} />
+      <Stack.Screen name="manageEvents" component={ManageEvents} />
+      <Stack.Screen name="managePush" component={ManagePush} />
       <Stack.Group screenOptions={{ presentation: "modal" }}>
         <Stack.Screen name="eventCreation" component={EventCreation} />
         <Stack.Screen name="eventCreationMap" component={MapModal} />

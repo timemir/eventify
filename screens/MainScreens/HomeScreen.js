@@ -1,8 +1,13 @@
-import React, { useEffect, useLayoutEffect, useState } from "react";
-import { SafeAreaView, ScrollView, StyleSheet } from "react-native";
+import axios from "axios";
+import Constants from "expo-constants";
+import * as Device from "expo-device";
+import * as Notifications from "expo-notifications";
+import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
+import { Platform, SafeAreaView, ScrollView, StyleSheet } from "react-native";
 import Ionicons from "react-native-vector-icons/Ionicons";
 // RNUILib
 import {
+  Button,
   Card,
   Carousel,
   Colors,
@@ -21,8 +26,8 @@ import { fetchAllCategories, fetchAllEvents } from "../../store/http";
 // Navigation
 import { useIsFocused } from "@react-navigation/native";
 
+loadFoundationConfig();
 export default function HomeScreen(props) {
-  loadFoundationConfig();
   //
   // State for all Events
   const [fetchedCategories, setFetchedCategories] = useState([]);
@@ -55,8 +60,83 @@ export default function HomeScreen(props) {
     }
   }, [isFocused]);
 
-  // Tab Bar Height Constant
+  // Managing Notifications -----------------------------------------------------
+  // Notification Permission
+  async function registerForPushNotificationsAsync() {
+    let token;
+    if (Device.isDevice) {
+      const { status: existingStatus } =
+        await Notifications.getPermissionsAsync();
+      let finalStatus = existingStatus;
+      if (existingStatus !== "granted") {
+        const { status } = await Notifications.requestPermissionsAsync();
+        finalStatus = status;
+      }
+      if (finalStatus !== "granted") {
+        alert("Failed to get push token for push notification!");
+        return;
+      }
+      token = (await Notifications.getExpoPushTokenAsync()).data;
+      console.log(token);
+    } else {
+      alert("Must use physical device for Push Notifications");
+    }
 
+    if (Platform.OS === "android") {
+      await Notifications.setNotificationChannelAsync("default", {
+        name: "default",
+        importance: Notifications.AndroidImportance.MAX,
+        vibrationPattern: [0, 250, 250, 250],
+        lightColor: "#FF231F7C",
+      });
+    }
+
+    return token;
+  }
+  // Notification Handling
+  const [expoPushToken, setExpoPushToken] = useState("");
+  const [notification, setNotification] = useState(false);
+  const notificationListener = useRef();
+  const responseListener = useRef();
+
+  useEffect(() => {
+    registerForPushNotificationsAsync().then((token) =>
+      setExpoPushToken(token)
+    );
+
+    notificationListener.current =
+      Notifications.addNotificationReceivedListener((notification) => {
+        setNotification(notification);
+      });
+
+    responseListener.current =
+      Notifications.addNotificationResponseReceivedListener((response) => {
+        console.log(response);
+      });
+
+    return () => {
+      Notifications.removeNotificationSubscription(
+        notificationListener.current
+      );
+      Notifications.removeNotificationSubscription(responseListener.current);
+    };
+  }, []);
+
+  // Pass on device token for the notification to somewhere
+
+  // Function that creates a local notification
+  async function schedulePushNotification() {
+    await Notifications.scheduleNotificationAsync({
+      content: {
+        title: "You've got mail! 📬",
+        body: "Here is the notification body",
+        data: { data: "goes here" },
+      },
+      trigger: { seconds: 5 },
+    });
+  }
+
+  // MAIN RETURN
   return (
     <SafeAreaView>
       {/* BUBBLES */}
@@ -111,6 +191,38 @@ export default function HomeScreen(props) {
       <ScrollView style={{ marginBottom: 45 }}>
         {/* RENDER EVENT CREATION MODAL: */}
         <View>
+          <Button
+            label="Send Local Notification"
+            onPress={async () => {
+              await schedulePushNotification();
+            }}
+          />
+          <Button
+            label="Send Push Notification"
+            onPress={async () => {
+              try {
+                const response = await axios.post(
+                  "https://expo.host/--/api/v2/push/send",
+                  {
+                    to: expoPushToken,
+                    title: "Test",
+                    body: "This is a test notification",
+                  },
+                  {
+                    headers: {
+                      host: "exp.host",
+                      accept: "application/json",
+                      "accept-encoding": "gzip",
+                      "content-type": "application/json",
+                    },
+                  }
+                );
+                console.log(response);
+              } catch (error) {
+                console.log(error);
+              }
+            }}
+          />
           <Card
             row
             center

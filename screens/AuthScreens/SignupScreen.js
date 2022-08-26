@@ -1,29 +1,29 @@
+import React, { useContext } from "react";
 import {
+  Image,
+  KeyboardAvoidingView,
+  SafeAreaView,
+  ScrollView,
   StyleSheet,
   Text,
-  View,
   TextInput,
-  SafeAreaView,
-  Image,
-  ScrollView,
-  KeyboardAvoidingView,
+  View,
 } from "react-native";
-import React, { useContext } from "react";
 import { GlobalStyles } from "../../util/GlobalColors";
 
 // formik
-import * as Yup from "yup";
-import { Formik, ErrorMessage } from "formik";
-import ButtonDefault from "../../components/UI/ButtonDefault";
-import BackArrow from "../../components/UI/BackArrow";
-import CircleSmall from "../../components/UI/CircleSmall";
-import { auth } from "../../store/firebase";
 import {
   createUserWithEmailAndPassword,
-  updateProfile,
   getAuth,
+  updateProfile,
 } from "firebase/auth";
+import { ErrorMessage, Formik } from "formik";
+import * as Yup from "yup";
+import BackArrow from "../../components/UI/BackArrow";
+import ButtonDefault from "../../components/UI/ButtonDefault";
+import CircleSmall from "../../components/UI/CircleSmall";
 import { AuthContext } from "../../store/auth-context";
+import { auth } from "../../store/firebase";
 // axios HTTP Requests
 import axios from "axios";
 
@@ -118,6 +118,7 @@ export default function SignupScreen({ navigation }) {
                         city: "",
                         interests: [],
                         photo: {},
+                        isAdmin: false,
                       };
                       // Sending User data to Firebase
                       axios
