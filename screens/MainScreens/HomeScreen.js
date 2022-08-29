@@ -25,6 +25,7 @@ import { GlobalStyles } from "../../util/GlobalColors";
 import { fetchAllCategories, fetchAllEvents } from "../../store/http";
 // Navigation
 import { useIsFocused } from "@react-navigation/native";
+import { auth } from "../../store/firebase";
 
 loadFoundationConfig();
 export default function HomeScreen(props) {
@@ -49,6 +50,7 @@ export default function HomeScreen(props) {
   useLayoutEffect(() => {
     // Rerun useEffect Function if we re-enter the HomeScreen
     if (isFocused) {
+      const user = auth.currentUser;
       // Helper Function, because we cannot set useEffect function as async. not allowed!
       async function getEvents() {
         const events = await fetchAllEvents();

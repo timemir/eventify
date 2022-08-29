@@ -1,6 +1,9 @@
 import { onValue, ref, set } from "firebase/database";
 import { database } from "../store/firebase";
 
+//
+// USER RELATED FUNCTIONS
+//
 export function getCurrentUser(uid) {
   const usersFromDatabase = ref(database, "users/");
   onValue(usersFromDatabase, (snapshot) => {
@@ -49,3 +52,34 @@ export function banUser(uid) {
 export function unbanUser(uid) {
   set(ref(database, "bannedUsers/" + uid), null);
 }
+//
+// --------------------------------------------------------------
+//
+
+//
+// EVENT RELATED FUNCTIONS
+//
+export function getAllEvents() {
+  const eventsFromDatabase = ref(database, "events/");
+  let dataOutput;
+  onValue(eventsFromDatabase, (snapshot) => {
+    const data = snapshot.val();
+    dataOutput = Object.entries(data);
+  });
+  return dataOutput;
+}
+
+export function getCurrentEvent(eventId) {
+  const usersFromDatabase = ref(database, "events/" + eventId);
+  onValue(usersFromDatabase, (snapshot) => {
+    const data = snapshot.val();
+    console.log(data);
+  });
+}
+
+export function deleteEvent(eventId) {
+  set(ref(database, "events/" + eventId), null);
+}
+//
+// --------------------------------------------------------------
+//

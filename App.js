@@ -38,6 +38,7 @@ import MainEventScreen from "./components/UI/HomeScreen/MainEventScreen";
 import ParticipantsList from "./components/UI/ParticipantsList";
 import UserProfileScreen from "./screens/MainScreens/UserProfileScreen";
 import AdminDashboard from "./screens/SettingsScreens/AdminDashboard";
+import ManageEventDetails from "./screens/SettingsScreens/AdminScreens/ManageEventDetails";
 import ManageEvents from "./screens/SettingsScreens/AdminScreens/ManageEvents";
 import ManagePush from "./screens/SettingsScreens/AdminScreens/ManagePush";
 import ManageUserDetails from "./screens/SettingsScreens/AdminScreens/ManageUserDetails";
@@ -185,6 +186,7 @@ function AuthenticatedStack() {
       <Stack.Screen name="manageUsers" component={ManageUsers} />
       <Stack.Screen name="manageUserDetails" component={ManageUserDetails} />
       <Stack.Screen name="manageEvents" component={ManageEvents} />
+      <Stack.Screen name="manageEventDetails" component={ManageEventDetails} />
       <Stack.Screen name="managePush" component={ManagePush} />
       <Stack.Group screenOptions={{ presentation: "modal" }}>
         <Stack.Screen name="eventCreation" component={EventCreation} />
