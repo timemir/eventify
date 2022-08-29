@@ -1,12 +1,12 @@
 import { onValue, ref, set } from "firebase/database";
-import { auth, database } from "../store/firebase";
+import { database } from "../store/firebase";
 
 export function getCurrentUser(uid) {
   const usersFromDatabase = ref(database, "users/");
   onValue(usersFromDatabase, (snapshot) => {
     const data = snapshot.val();
     // console.log(Object.entries(data)[0][0]);
-    for (const [key, entry] in Object.entries(data)) {
+    for (const key in Object.entries(data)) {
       if (Object.entries(data)[key][1].uid === uid) {
         console.log(Object.entries(data)[key][1]);
       }
