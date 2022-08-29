@@ -7,6 +7,8 @@ import {
   Card,
   Carousel,
   Colors,
+  Constants,
+  Dialog,
   ExpandableSection,
   Icon,
   Spacings,
@@ -15,28 +17,40 @@ import {
   View,
 } from "react-native-ui-lib";
 import Ionicons from "react-native-vector-icons/Ionicons";
-import { changeAdminStatus } from "../../../util/adminFunctions";
+import {
+  banUser,
+  changeAdminStatus,
+  checkBanStatus,
+  deleteUser,
+  unbanUser,
+} from "../../../util/adminFunctions";
 
 export default function ManageUserDetails(props) {
   const [userData, setUserData] = useState(null);
   const [adminSwitch, setAdminSwitch] = useState(
     props.route.params.user.isAdmin
   );
+  const [dialogTitle, setDialogTitle] = useState("");
+  const [showConfirm, setShowConfirm] = useState(false);
+  const [userIsBanned, setUserIsBanned] = useState(false);
+  //
+  //
   useEffect(() => {
     setUserData(props.route.params.user);
-  }, [props.route.params.user]);
+    setUserIsBanned(checkBanStatus(userData?.uid));
+  }, [props.route.params.user, userData]);
 
   function contactHandler() {
     console.log("contactHandler");
     //TODO: Open up Email App with user email
   }
   function banHandler() {
-    console.log("banHandler");
-    //TODO: Ban user from app somehow?
+    setDialogTitle("Wollen Sie den Nutzer wirklich bannen?");
+    setShowConfirm(true);
   }
   function deleteHandler() {
-    console.log("deleteHandler");
-    //TODO: Delete user entry from Firebase
+    setDialogTitle("Wollen Sie die Nutzerdaten wirklich löschen?");
+    setShowConfirm(true);
   }
 
   // Disable the admin switch for this specific email, so that we always have at least one admin
@@ -67,6 +81,14 @@ export default function ManageUserDetails(props) {
           Nutzer verwalten
         </Text>
         <View flex>
+          <View row spread marginR-15 marginB-15>
+            <Text>Nutzer Status</Text>
+            {userIsBanned ? (
+              <Text color={Colors.$textDangerLight}>gebannt</Text>
+            ) : (
+              <Text color={Colors.$textSuccessLight}>aktiv</Text>
+            )}
+          </View>
           <View row spread marginR-15 marginB-30>
             <Text>Admin Status</Text>
             <Switch
@@ -90,14 +112,28 @@ export default function ManageUserDetails(props) {
             backgroundColor={Colors.secondaryColor}
             onPress={contactHandler}
           />
-          <Button
-            marginT-50
-            marginB-5
-            borderRadius={10}
-            label="Nutzer bannen"
-            backgroundColor={Colors.$iconDanger}
-            onPress={banHandler}
-          />
+          {userIsBanned ? (
+            <Button
+              marginT-50
+              marginB-5
+              borderRadius={10}
+              label="Nutzer unbannen"
+              backgroundColor={Colors.$iconSuccessLight}
+              onPress={() => {
+                unbanUser(userData?.uid);
+                setUserIsBanned(false);
+              }}
+            />
+          ) : (
+            <Button
+              marginT-50
+              marginB-5
+              borderRadius={10}
+              label="Nutzer bannen"
+              backgroundColor={Colors.$iconDanger}
+              onPress={banHandler}
+            />
+          )}
           <Button
             marginV-5
             borderRadius={10}
@@ -105,10 +141,70 @@ export default function ManageUserDetails(props) {
             backgroundColor={Colors.$iconDanger}
             onPress={deleteHandler}
           />
+          <Dialog
+            useSafeArea
+            key={"deleteDialog"}
+            bottom
+            height={120}
+            panDirection={["down"]}
+            containerStyle={styles.roundedDialog}
+            visible={showConfirm}
+            onDismiss={() => setShowConfirm(false)}
+            renderPannableHeader={(props) => {
+              const { title } = props;
+              return (
+                <View>
+                  <View margin-20>
+                    <Text $textDefault>{title}</Text>
+                  </View>
+                  <View height={2} bg-grey70 />
+                </View>
+              );
+            }}
+            pannableHeaderProps={{
+              title: dialogTitle,
+            }}
+          >
+            {
+              <View margin-20 marginH-30 spread row>
+                <Button
+                  text60
+                  label="Abbrechen"
+                  link
+                  color={Colors.$backgroundDisabled}
+                  onPress={() => setShowConfirm(false)}
+                />
+                <Button
+                  text60
+                  label="Ja"
+                  link
+                  color={Colors.$textDangerLight}
+                  onPress={() => {
+                    setShowConfirm(false);
+                    if (
+                      dialogTitle === "Wollen Sie den Nutzer wirklich bannen?"
+                    ) {
+                      setUserIsBanned(true);
+                      banUser(userData?.uid);
+                    } else {
+                      deleteUser(props.route.params.userKey);
+                      props.navigation.goBack();
+                    }
+                  }}
+                />
+              </View>
+            }
+          </Dialog>
         </View>
       </ScrollView>
     </SafeAreaView>
   );
 }
 
-const styles = StyleSheet.create({});
+const styles = StyleSheet.create({
+  roundedDialog: {
+    backgroundColor: Colors.$backgroundDefault,
+    marginBottom: Constants.isIphoneX ? 0 : 20,
+    borderRadius: 12,
+  },
+});

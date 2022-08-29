@@ -29,3 +29,23 @@ export function changeAdminStatus(key, status) {
     isAdmin: status,
   });
 }
+
+export function deleteUser(key) {
+  set(ref(database, "users/" + key), null);
+}
+export function checkBanStatus(uid) {
+  const bannedUsers = ref(database, "bannedUsers/" + uid);
+  let status;
+  onValue(bannedUsers, (snapshot) => {
+    const data = snapshot.val();
+    status = data;
+  });
+  return status;
+}
+
+export function banUser(uid) {
+  set(ref(database, "bannedUsers/" + uid), true);
+}
+export function unbanUser(uid) {
+  set(ref(database, "bannedUsers/" + uid), null);
+}

@@ -15,16 +15,24 @@ import {
   View,
 } from "react-native-ui-lib";
 import Ionicons from "react-native-vector-icons/Ionicons";
+// Navigation
+import { useIsFocused } from "@react-navigation/native";
 import { getAllUsers } from "../../../util/adminFunctions";
 export default function ManageUsers(props) {
   const [allUsers, setAllUsers] = useState([]);
-  // allUsers[0] => Array of user data with key and object as value
-  // allUsers[0][0] => key
-  // allUsers[0][1] => object with user data
+  // MARK: allUsers[0] => Array of user data with key and object as value
+  // MARK: allUsers[0][0] => key
+  // MARK: allUsers[0][1] => object with user data
+  //
+  // Navigation Stuff
+  const isFocused = useIsFocused();
   useEffect(() => {
-    const data = getAllUsers();
-    setAllUsers(data);
-  }, []);
+    if (isFocused) {
+      const data = getAllUsers();
+      setAllUsers(data);
+      console.log("Fetched Userdata");
+    }
+  }, [isFocused]);
 
   // console.log(allUsers[0]);
 
