@@ -31,6 +31,8 @@ import MapModal from "./components/EventCreation/MapModal";
 import FirstTimeUserScreen from "./screens/AuthScreens/FirstTimeUserScreen";
 import EventCreation from "./screens/MainScreens/EventCreation";
 import { auth } from "./store/firebase";
+// Notification
+import registerNNPushToken from "native-notify";
 
 // Async Storage for tracking if we have a first time user
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -41,6 +43,8 @@ import AdminDashboard from "./screens/SettingsScreens/AdminDashboard";
 import ManageEventDetails from "./screens/SettingsScreens/AdminScreens/ManageEventDetails";
 import ManageEvents from "./screens/SettingsScreens/AdminScreens/ManageEvents";
 import ManagePush from "./screens/SettingsScreens/AdminScreens/ManagePush";
+import ManagePushAll from "./screens/SettingsScreens/AdminScreens/ManagePushAll";
+import ManagePushIndi from "./screens/SettingsScreens/AdminScreens/ManagePushIndi";
 import ManageUserDetails from "./screens/SettingsScreens/AdminScreens/ManageUserDetails";
 import ManageUsers from "./screens/SettingsScreens/AdminScreens/ManageUsers";
 import UserSettings from "./screens/SettingsScreens/UserSettings";
@@ -188,6 +192,8 @@ function AuthenticatedStack() {
       <Stack.Screen name="manageEvents" component={ManageEvents} />
       <Stack.Screen name="manageEventDetails" component={ManageEventDetails} />
       <Stack.Screen name="managePush" component={ManagePush} />
+      <Stack.Screen name="managePushAll" component={ManagePushAll} />
+      <Stack.Screen name="managePushIndi" component={ManagePushIndi} />
       <Stack.Group screenOptions={{ presentation: "modal" }}>
         <Stack.Screen name="eventCreation" component={EventCreation} />
         <Stack.Screen name="eventCreationMap" component={MapModal} />
@@ -216,7 +222,6 @@ function Navigation() {
   const [user, setUser] = useState(null);
 
   useLayoutEffect(() => {
-    console.log("wtf is happening");
     onAuthStateChanged(auth, (currentUser) => {
       if (currentUser) {
         setUser(currentUser);
@@ -240,6 +245,8 @@ function Navigation() {
 
 // Main Execution of the App
 export default function App() {
+  registerNNPushToken(3719, "xT0Bt22NitQhc3dS8WidSr");
+
   return (
     <>
       <StatusBar style="auto" />

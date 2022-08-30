@@ -23,7 +23,36 @@ export default function ManagePush(props) {
           color={Colors.secondaryColor}
           onPress={() => props.navigation.goBack()}
         />
-        <Text>ManagePush</Text>
+        <View flex margin-10 marginV-20>
+          <Card
+            flex
+            center
+            marginV-10
+            borderRadius={20}
+            backgroundColor={Colors.secondaryColor}
+            onPress={() => props.navigation.navigate("managePushAll")}
+          >
+            <View center flex>
+              <Text center white text40BO>
+                Notification an alle Nutzer senden
+              </Text>
+            </View>
+          </Card>
+          <Card
+            flex
+            center
+            marginV-10
+            borderRadius={20}
+            backgroundColor={Colors.secondaryColor}
+            onPress={() => props.navigation.navigate("managePushIndi")}
+          >
+            <View center flex>
+              <Text center white text40BO>
+                Notification an einen bestimmten Nutzer senden
+              </Text>
+            </View>
+          </Card>
+        </View>
       </View>
     </SafeAreaView>
   );

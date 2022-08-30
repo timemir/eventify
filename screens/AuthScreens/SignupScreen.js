@@ -10,6 +10,8 @@ import {
   View,
 } from "react-native";
 import { GlobalStyles } from "../../util/GlobalColors";
+// Notifications Registration
+import { registerIndieID } from "native-notify";
 
 // formik
 import {
@@ -133,6 +135,8 @@ export default function SignupScreen({ navigation }) {
                           console.log(error);
                           console.log("(Fehler) Keine Verbindung zum Server");
                         });
+                      // Registration for Notifications
+                      registerIndieID(user.uid, 3719, "xT0Bt22NitQhc3dS8WidSr");
                     })
                     .catch((error) => {
                       const errorCode = error.code;

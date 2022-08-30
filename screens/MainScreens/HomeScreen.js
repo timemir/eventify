@@ -5,6 +5,9 @@ import * as Notifications from "expo-notifications";
 import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { Platform, SafeAreaView, ScrollView, StyleSheet } from "react-native";
 import Ionicons from "react-native-vector-icons/Ionicons";
+// Notifications
+import registerNNPushToken from "native-notify";
+
 // RNUILib
 import {
   Button,
@@ -29,6 +32,8 @@ import { auth } from "../../store/firebase";
 
 loadFoundationConfig();
 export default function HomeScreen(props) {
+  // registerNNPushToken(3719, "xT0Bt22NitQhc3dS8WidSr");
+
   //
   // State for all Events
   const [fetchedCategories, setFetchedCategories] = useState([]);
@@ -199,32 +204,7 @@ export default function HomeScreen(props) {
               await schedulePushNotification();
             }}
           />
-          <Button
-            label="Send Push Notification"
-            onPress={async () => {
-              try {
-                const response = await axios.post(
-                  "https://expo.host/--/api/v2/push/send",
-                  {
-                    to: expoPushToken,
-                    title: "Test",
-                    body: "This is a test notification",
-                  },
-                  {
-                    headers: {
-                      host: "exp.host",
-                      accept: "application/json",
-                      "accept-encoding": "gzip",
-                      "content-type": "application/json",
-                    },
-                  }
-                );
-                console.log(response);
-              } catch (error) {
-                console.log(error);
-              }
-            }}
-          />
+
           <Card
             row
             center
