@@ -29,7 +29,8 @@
 
 ## About
 
-Eventify is a smartphone app for Cities to plan an manage public Events and for People to create and participate in social get-togethers to create strong communities. This project is part of the e-Venture course (Summerterm 2022) of the TU-Dortmund.
+Eventify is a react native app for City authorities to plan & manage public events. Additionally it allows for People to create and participate in social get-togethers to create strong communities. 
+This project is part of the e-Venture course (Summerterm 2022) of the TU-Dortmund.
 
 &nbsp;
 
