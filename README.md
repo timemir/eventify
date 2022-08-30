@@ -8,7 +8,7 @@
 <p align="center">
 <img src=https://img.shields.io/badge/NPM-%23000000.svg?style=for-the-badge&logo=npm&logoColor=white>
 <img src=https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black>
-<img src=https://img.shields.io/badge/Firebase-22ADF6?style=for-the-badge&logo=Firebase&logoColor=white>
+<img src=https://img.shields.io/badge/Firebase-22ADF6?style=for-the-badge&logo=Firebase&logoColor=yellow>
 <img src=https://img.shields.io/badge/node.js-6DA55F?style=for-the-badge&logo=node.js&logoColor=white>
 </p>
 
