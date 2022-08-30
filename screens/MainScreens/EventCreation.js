@@ -147,7 +147,6 @@ export default function EventCreation(props) {
           style={{ backgroundColor: Colors.greyBackgroundColor }}
         >
           <TextField
-            autoFocus
             autoCapitalize={"sentences"}
             placeholder="Wie soll dein Event heißen?"
             floatingPlaceholder

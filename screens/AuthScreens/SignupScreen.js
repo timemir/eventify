@@ -67,21 +67,21 @@ export default function SignupScreen({ navigation }) {
                   passwordConfirmation: "",
                 }}
                 validationSchema={Yup.object({
-                  firstName: Yup.string().required("Required"),
-                  lastName: Yup.string().required("Required"),
+                  firstName: Yup.string().required("Bitte ausfüllen"),
+                  lastName: Yup.string().required("Bitte ausfüllen"),
                   email: Yup.string()
-                    .email("Invalid Email")
-                    .required("Required"),
+                    .email("ungültige E-Mail")
+                    .required("Bitte ausfüllen"),
                   emailConfirmation: Yup.string().oneOf(
                     [Yup.ref("email"), null],
                     "Emails must match"
                   ),
                   password: Yup.string()
                     .min(6, "Dein Passwort muss mindestens 6 Zeichen haben.")
-                    .required("Required"),
+                    .required("Bitte ausfüllen"),
                   passwordConfirmation: Yup.string().oneOf(
                     [Yup.ref("password"), null],
-                    "Passwords must match"
+                    "Passwörter müssen übereinstimmen"
                   ),
                 })}
                 onSubmit={(values, formikActions) => {
@@ -213,7 +213,7 @@ export default function SignupScreen({ navigation }) {
                         <Text style={styles.error}>{errors.email}</Text>
                       ) : null}
                       <View style={styles.inputContainer}>
-                        <Text style={styles.label}>Email bestätigen</Text>
+                        <Text style={styles.label}>E-Mail bestätigen</Text>
                         <TextInput
                           onChangeText={handleChange("emailConfirmation")}
                           onBlur={handleBlur("emailConfirmation")}

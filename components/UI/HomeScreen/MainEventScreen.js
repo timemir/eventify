@@ -104,7 +104,7 @@ export default function MainEventScreen(props) {
   });
   function mapPressHandler() {
     props.navigation.goBack();
-    props.navigation.navigate("Map");
+    props.navigation.navigate("Karte");
     // TODO: Then highlight the pin of the given Event
   }
 

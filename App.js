@@ -82,6 +82,7 @@ function DrawerNavigator() {
               }}
             />
           ),
+          headerTitle: `Willkommen, ${user.displayName.split(" ")[0]}!`,
           // drawerItemStyle: { height: 0 }, // Hide a Drawer Item from showing inside Drawer
         })}
       />
