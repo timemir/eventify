@@ -10,6 +10,7 @@
 <img src=https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black>
 <img src=https://img.shields.io/badge/Firebase-22ADF6?style=for-the-badge&logo=Firebase&logoColor=yellow>
 <img src=https://img.shields.io/badge/node.js-6DA55F?style=for-the-badge&logo=node.js&logoColor=white>
+<img src=https://img.shields.io/badge/React_Native-20232A?style=for-the-badge&logo=react&logoColor=61DAFB>
 </p>
 
 &nbsp;
