@@ -106,6 +106,26 @@ export async function updateParticipants(eventId, uid, userName) {
     console.log(error);
   }
 }
+export async function fetchParticipatingEvents(uid) {
+  try {
+    const events = await axios.get(DB_LINK + "events.json");
+
+    let participatingEvents = [];
+    for (const key in events.data) {
+      if (events.data[key].participants) {
+        for (const keyInObject in events.data[key].participants) {
+          if (uid === events.data[key].participants[keyInObject].userID) {
+            participatingEvents.push(events.data[key]);
+          }
+        }
+      }
+    }
+    return participatingEvents;
+  } catch (error) {
+    console.log(error);
+  }
+}
+
 export async function removeRequester(eventId, uid) {
   try {
     const event = await axios.get(DB_LINK + "events/" + eventId + ".json");

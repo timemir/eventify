@@ -38,6 +38,8 @@ import registerNNPushToken from "native-notify";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import MainEventScreen from "./components/UI/HomeScreen/MainEventScreen";
 import ParticipantsList from "./components/UI/ParticipantsList";
+import EventChat from "./screens/ChatScreens/EventChat";
+import ChatScreen from "./screens/MainScreens/ChatScreen";
 import UserProfileScreen from "./screens/MainScreens/UserProfileScreen";
 import AdminDashboard from "./screens/SettingsScreens/AdminDashboard";
 import ManageEventDetails from "./screens/SettingsScreens/AdminScreens/ManageEventDetails";
@@ -117,6 +119,10 @@ function BottomTabNavigator() {
             iconName = focused ? "search" : "search-outline";
           } else if (route.name === "Karte") {
             iconName = focused ? "map" : "map-outline";
+          } else if (route.name === "Chats") {
+            iconName = focused
+              ? "chatbubble-ellipses"
+              : "chatbubble-ellipses-outline";
           }
           // You can return any component that you like here!
           return <Ionicons name={iconName} size={size} color={color} />;
@@ -143,7 +149,7 @@ function BottomTabNavigator() {
       />
       <BottomTab.Screen name="Suche" component={SearchScreen} />
       <BottomTab.Screen name="Karte" component={MapScreen} />
-      <BottomTab.Screen name="TESTING" component={AdminDashboard} />
+      <BottomTab.Screen name="Chats" component={ChatScreen} />
     </BottomTab.Navigator>
   );
 }
@@ -195,6 +201,7 @@ function AuthenticatedStack() {
       <Stack.Screen name="managePush" component={ManagePush} />
       <Stack.Screen name="managePushAll" component={ManagePushAll} />
       <Stack.Screen name="managePushIndi" component={ManagePushIndi} />
+      <Stack.Screen name="eventChat" component={EventChat} />
       <Stack.Group screenOptions={{ presentation: "modal" }}>
         <Stack.Screen name="eventCreation" component={EventCreation} />
         <Stack.Screen name="eventCreationMap" component={MapModal} />
