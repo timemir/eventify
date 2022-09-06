@@ -44,7 +44,7 @@ export default function ChatScreen(props) {
 
     if (isFocused) {
       getEventsOfUser();
-      console.log("eventsOfUser", eventsOfUser);
+      // console.log("eventsOfUser", eventsOfUser);
     }
   }, [isFocused]);
 
@@ -58,7 +58,11 @@ export default function ChatScreen(props) {
         backgroundColor={Colors.greyBackgroundColor}
         marginV-10
         center
-        onPress={() => props.navigation.navigate("eventChat", {})}
+        onPress={() =>
+          props.navigation.navigate("eventChat", {
+            createdOn: item.createdOn,
+          })
+        }
       >
         <View marginL-5>
           <Avatar
@@ -78,7 +82,15 @@ export default function ChatScreen(props) {
     <SafeAreaView style={{ flex: 1, marginHorizontal: 20 }}>
       <View flex>
         <View>
-          <FlatList renderItem={renderItem} data={eventsOfUser} />
+          {eventsOfUser.length > 0 ? (
+            <FlatList renderItem={renderItem} data={eventsOfUser} />
+          ) : (
+            <View center marginT-300>
+              <Text center text50 grey30>
+                Tritt einem Event bei, um die Gruppenchats zu sehen!
+              </Text>
+            </View>
+          )}
         </View>
       </View>
     </SafeAreaView>
