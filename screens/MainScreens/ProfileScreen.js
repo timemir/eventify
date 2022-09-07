@@ -1,3 +1,4 @@
+import { getDownloadURL, ref } from "firebase/storage";
 import React, { useEffect, useLayoutEffect, useState } from "react";
 import { Pressable, ScrollView, StyleSheet } from "react-native";
 import {
@@ -21,7 +22,7 @@ import {
   View,
 } from "react-native-ui-lib";
 import ProfilePhoto from "../../components/Settings/ProfilePhoto";
-import { auth } from "../../store/firebase";
+import { auth, storage } from "../../store/firebase";
 import {
   fetchUserById,
   getCreatedEventsById,
@@ -35,12 +36,46 @@ export default function ProfileScreen(props) {
   const [userData, setUserData] = useState(null);
   const [createdEventsIds, setCreatedEventsIds] = useState([]);
   const [createdEventsData, setCreatedEventsData] = useState([]);
+  const [profilePicture, setProfilePicture] = useState("");
+
+  useEffect(() => {
+    const profilePicRef = ref(
+      storage,
+      "users/" + user.uid + "/profilePicture.jpg"
+    );
+    getDownloadURL(profilePicRef)
+      .then((url) => {
+        setProfilePicture(url);
+        console.log(profilePicture);
+      })
+      .catch((error) => {
+        // A full list of error codes is available at
+        // https://firebase.google.com/docs/storage/web/handle-errors
+        switch (error.code) {
+          case "storage/object-not-found":
+            // File doesn't exist
+            break;
+          case "storage/unauthorized":
+            // User doesn't have permission to access the object
+            break;
+          case "storage/canceled":
+            // User canceled the upload
+            break;
+
+          // ...
+
+          case "storage/unknown":
+            // Unknown error occurred, inspect the server response
+            break;
+        }
+      });
+  }, []);
 
   // Get UserData from Firebase
   async function getUserData() {
     try {
       // TODO: set fetchUserById to props.uid so we fetch the user we clicked on!
-      console.log(props.route.params);
+      // console.log(props.route.params);
       let userToFetch = "";
       if (props.route.params?.userId) {
         userToFetch = props.route.params.userId;
@@ -48,7 +83,7 @@ export default function ProfileScreen(props) {
         userToFetch = user.uid;
       }
 
-      console.log(userToFetch);
+      // console.log(userToFetch);
       const userData = await fetchUserById(userToFetch);
       setUserData(userData);
     } catch (error) {
@@ -62,7 +97,7 @@ export default function ProfileScreen(props) {
       await getUserData();
     }
     loadUserData();
-    console.log(userData);
+    // console.log(userData);
   }, []);
 
   useEffect(() => {
@@ -95,13 +130,13 @@ export default function ProfileScreen(props) {
     }
     fetchCreatedEventsIds();
 
-    console.log(createdEventsIds);
+    // console.log(createdEventsIds);
   }, []);
 
   useEffect(() => {
     async function fetchCreatedEventsData() {
       let arraytwo = await getCreatedEventsInProfile(createdEventsIds);
-      console.log(arraytwo);
+      // console.log(arraytwo);
 
       setCreatedEventsData(arraytwo);
     }
@@ -160,7 +195,7 @@ export default function ProfileScreen(props) {
                 style={{ borderRadius: 75, overflow: "hidden" }}
               >
                 <Image
-                  source={{ uri: userData?.photo?.uri }}
+                  source={{ uri: profilePicture }}
                   style={{ width: 150, height: 150 }}
                 />
               </View>

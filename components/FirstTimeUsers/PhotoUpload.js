@@ -17,7 +17,7 @@ import {
 
 // Expo Image Picker for Uploading Photos
 import * as ImagePicker from "expo-image-picker";
-import { uploadImage } from "../../store/http";
+import { fetchProfilePicture, uploadImage } from "../../store/http";
 
 export default function PhotoUpload(props) {
   // Image State
@@ -34,7 +34,7 @@ export default function PhotoUpload(props) {
     });
 
     console.log(result);
-    props.onChange(result);
+    // props.onChange(result);
     //! STRUCTURE OF THE "result" OBJECT!:
     // object{
     // "cancelled": bool,
@@ -112,6 +112,15 @@ export default function PhotoUpload(props) {
                   setUploadingImage,
                   setImageUploaded
                 );
+                setTimeout(() => {
+                  console.log(
+                    "fetch profilepic url: ",
+                    fetchProfilePicture(props.user.uid.toString())
+                  );
+                  fetchProfilePicture(props.user.uid.toString()).then((url) => {
+                    props.onChange(url);
+                  });
+                }, 5000);
               }}
             />
           ) : (

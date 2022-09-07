@@ -1,6 +1,8 @@
 import axios from "axios";
-import { ref, uploadBytes } from "firebase/storage";
+import { get } from "firebase/database";
+import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import { storage } from "../store/firebase";
+
 const DB_LINK =
   "https://eventify-43747-default-rtdb.europe-west1.firebasedatabase.app/";
 
@@ -20,6 +22,15 @@ export async function fetchUserById(uid) {
   for (const key in response.data) {
     if (uid === response.data[key].uid) {
       return response.data[key]; // Returns Object
+    }
+  }
+}
+export async function fetchPhotoById(uid) {
+  const response = await axios.get(DB_LINK + "users.json");
+
+  for (const key in response.data) {
+    if (uid === response.data[key].uid) {
+      return response.data[key].photo; // Returns Object
     }
   }
 }
@@ -74,7 +85,7 @@ export async function updateCreatedEventsByUser(uid, createdOn) {
           });
         }
 
-        console.log(typeof userList.data[key].createdEvents);
+        // console.log(typeof userList.data[key].createdEvents);
         const response = await axios.put(
           DB_LINK + "users/" + key + "/createdEvents/" + counter + ".json",
           {
@@ -245,10 +256,30 @@ export async function uploadImage(
   uploadBytes(imageRef, blob)
     .then((snapshot) => {
       uploadingStateFunction(false);
-      console.log("Uploaded a blob or file!");
+      console.log("Uploaded profile picture!");
       imageUploadedCheckFunction(true);
     })
     .catch((error) => {
       console.log(error);
     });
+}
+//
+//
+//
+export async function fetchProfilePicture(uid) {
+  const profilePicRef = ref(storage, "users/" + uid + "/profilePicture.jpg");
+  try {
+    const url = await getDownloadURL(profilePicRef);
+    return url;
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+export async function getPictureById(uid) {
+  let url;
+  const picRef = ref(database, "users/" + uid + "/photo");
+  get(picRef).then((snapshot) => {
+    url = snapshot.val();
+  });
 }

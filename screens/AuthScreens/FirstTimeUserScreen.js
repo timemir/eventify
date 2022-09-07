@@ -193,7 +193,10 @@ export default function FirstTimeUserScreen(props) {
     setSelectedPhoto(childData);
   }
   function renderPhoto() {
-    const stopNextStep = false;
+    console.log(selectedPhoto);
+    // Check if Object is empty
+    const stopNextStep = Object.keys(selectedPhoto).length === 0 ? true : false;
+
     const user = auth.currentUser;
 
     return (

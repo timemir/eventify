@@ -1,6 +1,6 @@
 import * as Calendar from "expo-calendar";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useLayoutEffect, useState } from "react";
 import { Pressable, SafeAreaView, ScrollView, StyleSheet } from "react-native";
 import { showLocation } from "react-native-map-link";
 import MapView, { Marker } from "react-native-maps";
@@ -23,6 +23,10 @@ import {
   updateParticipants,
   updateParticipationRequest,
 } from "../../../store/http";
+// Avatar Imports
+import { getDownloadURL, ref } from "firebase/storage";
+import { storage } from "../../../store/firebase";
+//
 import { categoryImage } from "../../../util/categoriesImages";
 const { Toast } = Incubator;
 // Async Storage to store first time user created
@@ -35,6 +39,8 @@ import { create } from "yup/lib/array";
 export default function MainEventScreen(props) {
   const eventObject = props.route.params;
   // console.log(eventObject);
+  //
+  //
   // Date Management
   const date = new Date(eventObject.date);
   const longDate = date.toLocaleDateString("de-DE").split("-");
@@ -56,6 +62,9 @@ export default function MainEventScreen(props) {
       month: "short",
     });
   }
+  // --------------------------------------------------------------------------------
+  //
+  //
   // Auth Handling
   const user = auth.currentUser;
 
@@ -245,7 +254,50 @@ export default function MainEventScreen(props) {
   }
 
   useEffect(() => {
-    console.log(eventObject);
+    // console.log(eventObject);
+  }, []);
+
+  // Avatar Handling
+  const [avatarOne, setAvatarOne] = useState("");
+  const [avatarTwo, setAvatarTwo] = useState("");
+  const [avatarThree, setAvatarThree] = useState("");
+
+  useLayoutEffect(() => {
+    const avatarOneRef = ref(
+      storage,
+      "users/" + eventObject.participants[0].userID + "/profilePicture.jpg"
+    );
+
+    const avatarTwoRef = ref(
+      storage,
+      "users/" + eventObject.participants[1]?.userID + "/profilePicture.jpg"
+    );
+
+    const avatarThreeRef = ref(
+      storage,
+      "users/" + eventObject.participants[2]?.userID + "/profilePicture.jpg"
+    );
+    getDownloadURL(avatarOneRef)
+      .then((url) => {
+        setAvatarOne(url);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+    getDownloadURL(avatarTwoRef)
+      .then((url) => {
+        setAvatarTwo(url);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+    getDownloadURL(avatarThreeRef)
+      .then((url) => {
+        setAvatarThree(url);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
   }, []);
 
   // MAIN RETURN
@@ -403,9 +455,9 @@ export default function MainEventScreen(props) {
             <Avatar
               size={80}
               source={{
-                uri: "https://lh3.googleusercontent.com/-cw77lUnOvmI/AAAAAAAAAAI/AAAAAAAAAAA/WMNck32dKbc/s181-c/104220521160525129167.jpg",
+                uri: avatarOne,
               }}
-              label={"IT"}
+              label={"Creator"}
             />
             <View centerV marginL-15 flex>
               <Text text70BO>{eventObject.createdBy.userName}</Text>
@@ -446,16 +498,15 @@ export default function MainEventScreen(props) {
       <View row>
         <View row flex marginT-5 marginL-20>
           <Pressable
-            onPress={() =>
+            onPress={() => {
               props.navigation.navigate("participants", {
                 participants: eventObject.participants,
                 entryRequests: eventObject.entryRequests,
                 eventId: eventObject.eventId,
                 creator: eventObject.createdBy.userID,
                 currentState: updateState,
-                updateState: setUpdateState,
-              })
-            }
+              });
+            }}
           >
             <Text text80BO center>
               Teilnehmer
@@ -470,7 +521,7 @@ export default function MainEventScreen(props) {
                 }}
                 size={55}
                 source={{
-                  uri: "https://lh3.googleusercontent.com/-cw77lUnOvmI/AAAAAAAAAAI/AAAAAAAAAAA/WMNck32dKbc/s181-c/104220521160525129167.jpg",
+                  uri: avatarOne,
                 }}
                 label={"IT"}
               />
@@ -479,13 +530,13 @@ export default function MainEventScreen(props) {
               <Avatar
                 containerStyle={{
                   position: "absolute",
-                  left: 20,
+                  left: 25,
                   top: 18,
                   zIndex: 2,
                 }}
                 size={55}
                 source={{
-                  uri: "https://lh3.googleusercontent.com/-cw77lUnOvmI/AAAAAAAAAAI/AAAAAAAAAAA/WMNck32dKbc/s181-c/104220521160525129167.jpg",
+                  uri: avatarTwo,
                 }}
                 label={"IT"}
               />
@@ -494,13 +545,13 @@ export default function MainEventScreen(props) {
               <Avatar
                 containerStyle={{
                   position: "absolute",
-                  left: 35,
+                  left: 45,
                   top: 18,
                   zIndex: 3,
                 }}
                 size={55}
                 source={{
-                  uri: "https://lh3.googleusercontent.com/-cw77lUnOvmI/AAAAAAAAAAI/AAAAAAAAAAA/WMNck32dKbc/s181-c/104220521160525129167.jpg",
+                  uri: avatarThree,
                 }}
                 label={"IT"}
                 badgePosition="BOTTOM_RIGHT"

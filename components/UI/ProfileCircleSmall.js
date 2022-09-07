@@ -11,8 +11,8 @@ export default function ProfileCircleSmall(props) {
   async function getUserPhoto() {
     try {
       const userData = await fetchUserById(user.uid);
-      if (userData?.photo.uri) {
-        setPhotoPath(userData.photo.uri);
+      if (userData?.photo) {
+        setPhotoPath(userData?.photo);
       } else {
         console.log("No Photo Uploaded - Using Default Avatar");
       }

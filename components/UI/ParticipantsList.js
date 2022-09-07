@@ -18,11 +18,15 @@ import { removeRequester, updateParticipants } from "../../store/http";
 export default function ParticipantsList(props) {
   // Have to remove first entry, because it is always empty
   const [participants, setParticipants] = useState([]);
+  const [profilePictures, setProfilePictures] = useState([]);
+  const [counter, setCounter] = useState(false);
   const [entryRequests, setEntryRequests] = useState([]);
   const [currentUserIsCreator, setCurrentUserIsCreator] = useState(false);
+
   useEffect(() => {
     setParticipants(props.route.params?.participants);
   }, []);
+
   useEffect(() => {
     if (props.route.params?.entryRequests?.length > 1) {
       props.route.params?.entryRequests?.shift();
@@ -38,6 +42,7 @@ export default function ParticipantsList(props) {
   }, []);
 
   function renderItem({ item }) {
+    console.log("test");
     return (
       <View flex row centerV marginV-5 key={item.userID}>
         <Avatar
