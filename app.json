@@ -1,0 +1,54 @@
+{
+  "expo": {
+    "name": "eventify",
+    "slug": "eventify",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/images/icon.png",
+    "userInterfaceStyle": "light",
+    "splash": {
+      "image": "./assets/images/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#ffffff"
+    },
+    "updates": {
+      "fallbackToCacheTimeout": 0,
+      "url": "https://u.expo.dev/49e5629a-8a94-40d7-a4dc-22d90f520b90"
+    },
+    "assetBundlePatterns": [
+      "**/*"
+    ],
+    "ios": {
+      "supportsTablet": false,
+      "infoPlist": {
+        "NSRemindersUsageDescription": "Creating a calendar entry with the relevant event data after user wishes to press on `Add to calendar`"
+      },
+      "bundleIdentifier": "com.kukli.eventify",
+      "config": {
+        "googleMapsApiKey": "GOOGLE_MAPS_API_KEY"
+      }
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#FFFFFF"
+      },
+      "permissions": [
+        "READ_CALENDAR",
+        "WRITE_CALENDAR"
+      ]
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "49e5629a-8a94-40d7-a4dc-22d90f520b90"
+      }
+    },
+    "runtimeVersion": {
+      "policy": "sdkVersion"
+    }
+  },
+  "name": "eventify"
+}
