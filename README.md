@@ -59,6 +59,14 @@ https://user-images.githubusercontent.com/84287747/193215462-4d58789a-f130-4acb-
 
 3. Create an account & enjoy!
 
+## Optimizations
+
+
+One of the first things I would optimize is the overall data architecture to make the app more scalable. Also I would include a good global state management API such as React Query to better handle Data Fetching from Firebase. Overall, I would design everything differently, as I learned a lot after completing this project!
+
+## Lessons Learned:
+
+Separation of concerns is really helpful and important (most of the time) when dealing with any kind of component. I also learned that handling data can get messy real quick and that you need good a good plan and precise data architecture. Overall I learned a lot during the development of this project and it was a lot of fun.
 
 ## Authors
  [kukli07](https://github.com/kukli07) &nbsp;
